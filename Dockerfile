@@ -3,7 +3,7 @@ FROM python:3.11-bookworm
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
-WORKDIR /eskro-api
+WORKDIR /eksro-api
 
 RUN pip install --upgrade pip wheel "poetry==2.1.3"
 RUN poetry config virtualenvs.create false
