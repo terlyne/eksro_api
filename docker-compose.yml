@@ -24,7 +24,7 @@ services:
     environment:
       POSTGRES_DB: eksro_db
       POSTGRES_USER: eksro_user
-      POSTGRES_PASSWORD: eksro_pwd
+      POSTGRES_PASSWORD: 1Nju8XLZyvKdyxrdGjHuPA85Ufx5DkqY
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

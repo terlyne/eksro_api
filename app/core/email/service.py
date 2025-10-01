@@ -28,7 +28,7 @@ class EmailService:
     async def send_confirmation_register_email(
         self, email: str, token: str, username: str
     ):
-        template = self.env.get_template("confrim_registration.html")
+        template = self.env.get_template("confirmation_register.html")
 
         html_content = template.render(
             username=username,
