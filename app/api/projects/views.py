@@ -68,7 +68,7 @@ async def get_project_by_id(
 @router.post("/", response_model=ProjectFullResponse)
 async def create_project(
     title: Annotated[str, Form()],
-    body: Annotated[str, Form()],
+    project_url: Annotated[str, Form()],
     keywords: Annotated[list[str], Form()],
     min_text: Annotated[str, Form()],
     image: UploadFile,
@@ -84,7 +84,7 @@ async def create_project(
     project = await crud.create_project(
         session=session,
         title=title,
-        body=body,
+        project_url=project_url,
         keywords=keywords,
         min_text=min_text,
         image_url=image_url,
@@ -100,7 +100,7 @@ async def create_project(
 async def update_project(
     project_id: uuid.UUID,
     title: Annotated[str | None, Form()] = None,
-    body: Annotated[str | None, Form()] = None,
+    project_url: Annotated[str | None, Form()] = None,
     keywords: Annotated[list[str] | None, Form()] = None,
     min_text: Annotated[str | None, Form()] = None,
     image: UploadFile | None = None,
@@ -132,7 +132,7 @@ async def update_project(
         session=session,
         current_project=current_project,
         title=title,
-        body=body,
+        project_url=project_url,
         keywords=keywords,
         min_text=min_text,
         image_url=image_url,

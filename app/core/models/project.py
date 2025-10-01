@@ -7,7 +7,7 @@ from core.models.mixins.id import IdMixin
 
 class Project(Base, IdMixin):
     title: Mapped[str] = mapped_column(Text())
-    body: Mapped[str] = mapped_column(Text())  # Содержание проекта в формате HTML
+    project_url: Mapped[str] = mapped_column(Text())
     is_active: Mapped[bool] = mapped_column(default=True, server_default="true")
 
     # Ключевые слова для поиска внутри сайта

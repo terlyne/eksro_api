@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 class ProjectBase(BaseModel):
     title: str
-    body: str
+    project_url: str
     is_active: bool
     min_text: str
     image_url: str
