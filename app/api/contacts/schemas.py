@@ -6,6 +6,8 @@ class ContactsBase(BaseModel):
     email: EmailStr
     work_hours: str
     address: str
+    telegram: str
+    vk: str
 
 
 class ContactsCreate(ContactsBase):
