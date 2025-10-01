@@ -31,14 +31,6 @@ class AdminService:
         session.add(admin)
         await session.commit()
 
-        # Отправляем администратору сообщение на почту для подтверждение регистрации
-        payload = {"email": admin.email}
-        register_invitation_token = create_jwt_without_type(payload=payload)
-        await email_service.send_register_invitation(
-            email=admin.email,
-            token=register_invitation_token,
-        )
-
     def _generate_random_password(self, length: int = 16) -> str:
         alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
         return "".join(secrets.choice(alphabet) for _ in range(length))
