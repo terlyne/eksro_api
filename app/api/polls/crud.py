@@ -5,7 +5,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import Poll, PollAnswer
-from api.polls.schemas import PollCreate, PollUpdate, QuestionCreate, AnswerCreate
+from api.polls.schemas import PollCreate, PollUpdate, AnswerCreate
 
 
 async def get_polls(
