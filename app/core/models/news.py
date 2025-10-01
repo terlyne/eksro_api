@@ -16,7 +16,7 @@ class News(Base, IdMixin):
     __tablename__ = "news"
 
     title: Mapped[str] = mapped_column(Text())
-    body: Mapped[str] = mapped_column(Text())  # Содержание новости в формате HTML
+    news_url: Mapped[str] = mapped_column(Text())  # Ссылка на новость
 
     # Ключевые слова для поиска внутри сайта
     keywords: Mapped[list[str]] = mapped_column(ARRAY(Text()))

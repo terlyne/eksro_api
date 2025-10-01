@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 class NewsBase(BaseModel):
     title: str
-    body: str
+    news_url: str
     keywords: list[str]
     image_url: str
     min_text: str

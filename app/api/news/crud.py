@@ -44,7 +44,7 @@ async def get_news_by_id(
 async def create_news(
     session: AsyncSession,
     title: str,
-    body: str,
+    news_url: str,
     keywords: list[str],
     image_url: str,
     min_text: str,
@@ -53,7 +53,7 @@ async def create_news(
 ) -> News:
     news = News(
         title=title,
-        body=body,
+        news_url=news_url,
         keywords=keywords,
         image_url=image_url,
         min_text=min_text,

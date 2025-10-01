@@ -56,7 +56,7 @@ async def get_news_preview(
 @router.post("/", response_model=NewsFullResponse)
 async def create_news(
     title: Annotated[str, Form()],
-    body: Annotated[str, Form()],
+    news_url: Annotated[str, Form()],
     image: UploadFile,
     min_text: Annotated[str, Form()],
     news_date: Annotated[str, Form()],
@@ -72,7 +72,7 @@ async def create_news(
     news = await crud.create_news(
         session=session,
         title=title,
-        body=body,
+        news_url=news_url,
         keywords=keywords,
         image_url=image_url,
         min_text=min_text,
@@ -87,7 +87,7 @@ async def create_news(
 async def update_news(
     news_id: uuid.UUID,
     title: Annotated[str | None, Form()] = None,
-    body: Annotated[str | None, Form()] = None,
+    news_url: Annotated[str | None, Form()] = None,
     keywords: Annotated[list[str] | None, Form()] = None,
     image: UploadFile | None = None,
     min_text: Annotated[str | None, Form()] = None,
@@ -116,7 +116,7 @@ async def update_news(
         session=session,
         current_news=current_news,
         title=title,
-        body=body,
+        news_url=news_url,
         keywords=keywords,
         image_url=image_url,
         min_text=min_text,
