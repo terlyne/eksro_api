@@ -1,3 +1,5 @@
+import uuid
+
 from pydantic import BaseModel
 
 
@@ -7,4 +9,4 @@ class SiteImageBase(BaseModel):
 
 
 class SiteImageResponse(SiteImageBase):
-    pass
+    id: uuid.UUID

@@ -1,3 +1,4 @@
+import uuid
 from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,3 +25,21 @@ async def get_site_images(
     stmt = select(SiteImage).order_by(desc(SiteImage.created_at))
     result = await session.scalars(stmt)
     return list(result.all())
+
+
+async def get_site_image_by_id(
+    session: AsyncSession,
+    site_image_id: uuid.UUID,
+) -> SiteImage | None:
+    stmt = select(SiteImage).where(SiteImage.id == site_image_id)
+    site_image = await session.scalar(stmt)
+
+    return site_image
+
+
+async def delete_site_image(
+    session: AsyncSession,
+    current_site_image: SiteImage,
+):
+    await session.delete(current_site_image)
+    await session.commit()

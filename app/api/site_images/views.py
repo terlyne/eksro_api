@@ -1,7 +1,8 @@
+import uuid
 from typing import Annotated
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, UploadFile, Form, Depends
+from fastapi import APIRouter, HTTPException, status, UploadFile, Form, Depends
 
 from core.models.user import User
 from core.db_helper import db_helper
@@ -35,3 +36,22 @@ async def get_site_images(
 ):
     site_images = await crud.get_site_images(session=session)
     return site_images
+
+
+@router.delete("/{site_image_id}/")
+async def delete_site_image(
+    site_image_id: uuid.UUID,
+    user: User = Depends(get_current_active_user),
+    session: AsyncSession = Depends(db_helper.session_getter),
+):
+    current_site_image = await crud.get_site_image_by_id(
+        session=session,
+        site_image_id=site_image_id,
+    )
+    if not current_site_image:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Site image not found",
+        )
+
+    return {"message": "success"}
