@@ -28,8 +28,8 @@ async def create_site_image(
     return site_image
 
 
-@router.post("/", response_model=list[SiteImageResponse])
-async def upload_site_image(
+@router.get("/", response_model=list[SiteImageResponse])
+async def get_site_images(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
