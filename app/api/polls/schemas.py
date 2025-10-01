@@ -18,14 +18,6 @@ class PollUpdate(BaseModel):
     is_active: bool | None = None
 
 
-class QuestionBase(BaseModel):
-    question_text: str
-
-
-class QuestionCreate(QuestionBase):
-    pass
-
-
 class AnswerBase(BaseModel):
     answer_text: str
 
@@ -38,11 +30,5 @@ class AnswerCreate(AnswerBase):
     pass
 
 
-class QuestionResponse(QuestionBase):
-    id: uuid.UUID
-    answers: list[AnswerResponse] = []
-
-
 class PollResponse(PollBase):
     id: uuid.UUID
-    questions: list[QuestionResponse] = []

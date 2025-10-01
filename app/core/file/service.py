@@ -14,6 +14,7 @@ EVENTS_IMAGES_FOLDER = "images/events"
 NEWS_IMAGES_FOLDER = "images/news"
 PARTNERS_IMAGES_FOLDER = "images/partners"
 PROJECTS_IMAGES_FOLDER = "images/projects"
+SITE_IMAGES_FOLDER = "images/site"
 DOCUMENTS_FOLDER = "documents"
 
 
