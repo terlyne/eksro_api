@@ -23,7 +23,6 @@ def upgrade() -> None:
     """Upgrade schema."""
     op.add_column("news", sa.Column("news_url", sa.Text(), nullable=False))
     op.drop_column("news", "body")
-    # ### end Alembic commands ###
 
 
 def downgrade() -> None:

@@ -21,3 +21,5 @@ class ContactsUpdate(BaseModel):
     email: EmailStr | None = None
     work_hours: str | None = None
     address: str | None = None
+    telegram: str | None = None
+    vk: str | None = None
