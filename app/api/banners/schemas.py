@@ -8,6 +8,5 @@ class BannerResponse(BaseModel):
     image_url: str
     title: str
     description: str
-    redirect_url: str
     is_active: bool
     count_order: int

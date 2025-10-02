@@ -19,7 +19,6 @@ async def create_banner(
     image: UploadFile,
     title: Annotated[str, Form()],
     description: Annotated[str, Form()],
-    redirect_url: Annotated[str, Form()],
     count_order: Annotated[int, Form(gt=0)],
     is_active: Annotated[bool, Form()] = True,
     user: User = Depends(get_current_active_user),
@@ -36,7 +35,6 @@ async def create_banner(
         image_url=image_url,
         title=title,
         description=description,
-        redirect_url=redirect_url,
         is_active=is_active,
         count_order=count_order,
     )
@@ -81,7 +79,6 @@ async def update_banner(
     image: UploadFile | None = None,
     title: Annotated[str | None, Form()] = None,
     description: Annotated[str | None, Form()] = None,
-    redirect_url: Annotated[str | None, Form()] = None,
     count_order: Annotated[int | None, Form(gt=0)] = None,
     is_active: Annotated[bool | None, Form()] = None,
     user: User = Depends(get_current_active_user),
@@ -106,7 +103,6 @@ async def update_banner(
         image_url=image_url,
         title=title,
         description=description,
-        redirect_url=redirect_url,
         count_order=count_order,
         is_active=is_active,
     )

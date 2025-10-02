@@ -9,8 +9,5 @@ class Banner(Base, IdMixin):
     image_url: Mapped[str] = mapped_column(Text())
     title: Mapped[str] = mapped_column(Text())
     description: Mapped[str] = mapped_column(Text())
-    redirect_url: Mapped[str] = mapped_column(
-        Text()
-    )  # URL при нажатии на который будет перенаправляться пользователь (URL страницы проекта)
     is_active: Mapped[bool] = mapped_column(default=True, server_default="true")
     count_order: Mapped[int]  # Порядок отображения

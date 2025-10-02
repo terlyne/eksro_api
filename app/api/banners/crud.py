@@ -11,7 +11,6 @@ async def create_banner(
     image_url: str,
     title: str,
     description: str,
-    redirect_url: str,
     is_active: bool,
     count_order: int,
 ) -> Banner:
@@ -19,7 +18,6 @@ async def create_banner(
         image_url=image_url,
         title=title,
         description=description,
-        redirect_url=redirect_url,
         is_active=is_active,
         count_order=count_order,
     )
