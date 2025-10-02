@@ -173,7 +173,7 @@ async def create_news_type(
     return news_type
 
 
-@router.put("/types/{type_id}/", response_model=NewsTypeResponse)
+@router.patch("/types/{type_id}/", response_model=NewsTypeResponse)
 async def update_news_type(
     type_id: uuid.UUID,
     type_in: NewsTypeCreate,
