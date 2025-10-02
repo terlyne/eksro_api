@@ -22,6 +22,9 @@ async def login_user(
         username_or_email=username_or_email,
         password=password,
     )
+    if not user:
+        return None
+
     if not user.is_active:
         return None
     return user
