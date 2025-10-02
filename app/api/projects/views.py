@@ -32,24 +32,6 @@ async def get_projects(
     return projects
 
 
-@router.get("/preview/", response_model=list[ProjectPreviewResponse])
-async def get_preview_projects(
-    skip: int = 0,
-    limit: int = 6,
-    session: AsyncSession = Depends(db_helper.session_getter),
-):
-    projects = await crud.get_projects(session=session, skip=skip, limit=limit)
-    preview_projects = []
-    for project in projects:
-        preview_projects.append(
-            ProjectPreviewResponse(
-                id=project.id, min_text=project.min_text, image_url=project.image_url
-            )
-        )
-
-    return preview_projects
-
-
 @router.get("/{project_id}/", response_model=ProjectFullResponse)
 async def get_project_by_id(
     project_id: uuid.UUID,
