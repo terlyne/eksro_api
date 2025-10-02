@@ -1,12 +1,12 @@
 import uuid
 
-from sqlalchemy import select, desc, delete
+from sqlalchemy import select, desc
 from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.models import Subscriber, NewsType
+from core.models import Subscriber
 from api.subscribers.schemas import SubscriberCreate
-from api.news.crud import get_news_type_by_id
+from api.news.repository import get_news_type_by_id
 
 
 async def get_subscribers(

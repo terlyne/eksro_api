@@ -9,7 +9,7 @@ from core.db_helper import db_helper
 from core.file.service import file_service, PROJECTS_IMAGES_FOLDER
 from api.dependencies import get_current_active_user, verify_active_param_access
 from api.projects.schemas import ProjectFullResponse, ProjectPreviewResponse
-from api.projects import crud
+from api.projects import repository
 
 
 router = APIRouter()
@@ -22,7 +22,7 @@ async def get_projects(
     limit: int | None = None,
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    projects = await crud.get_projects(
+    projects = await repository.get_projects(
         session=session,
         is_active=is_active,
         skip=skip,
@@ -37,7 +37,7 @@ async def get_project_by_id(
     project_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    project = await crud.get_project_by_id(session=session, project_id=project_id)
+    project = await repository.get_project_by_id(session=session, project_id=project_id)
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -63,7 +63,7 @@ async def create_project(
     image_url = await file_service.save_file(
         upload_file=image, subdirectory=PROJECTS_IMAGES_FOLDER
     )
-    project = await crud.create_project(
+    project = await repository.create_project(
         session=session,
         title=title,
         project_url=project_url,
@@ -92,7 +92,7 @@ async def update_project(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    current_project = await crud.get_project_by_id(
+    current_project = await repository.get_project_by_id(
         session=session,
         project_id=project_id,
     )
@@ -110,7 +110,7 @@ async def update_project(
             image, subdirectory=PROJECTS_IMAGES_FOLDER
         )
 
-    project = await crud.update_project(
+    project = await repository.update_project(
         session=session,
         current_project=current_project,
         title=title,
@@ -132,7 +132,7 @@ async def delete_project(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    is_deleted = await crud.delete_project(session=session, project_id=project_id)
+    is_deleted = await repository.delete_project(session=session, project_id=project_id)
     if not is_deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

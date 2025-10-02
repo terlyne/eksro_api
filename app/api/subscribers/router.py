@@ -13,7 +13,7 @@ from api.subscribers.schemas import (
     SubscriberCreate,
     NewsLetter,
 )
-from api.subscribers import crud
+from api.subscribers import repository
 
 
 router = APIRouter()
@@ -24,7 +24,7 @@ async def get_subscribers(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    subscriber = await crud.get_subscribers(session=session)
+    subscriber = await repository.get_subscribers(session=session)
     return subscriber
 
 
@@ -34,7 +34,7 @@ async def subscribe_to_updates(
     subscriber_in: SubscriberCreate,
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    subscriber = await crud.create_subscriber(
+    subscriber = await repository.create_subscriber(
         session=session, type_id=type_id, subscriber_in=subscriber_in
     )
 
@@ -59,7 +59,7 @@ async def confirm_subscription(
 ):
     payload = security_utils.decode_jwt(token=token)
     subscriber_id = payload["sub"]
-    subscription = await crud.confirm_subscription(
+    subscription = await repository.confirm_subscription(
         session=session, subscriber_id=subscriber_id
     )
 
@@ -72,7 +72,7 @@ async def delete_subscriber(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
 
-    is_deleted = await crud.delete_subscriber(
+    is_deleted = await repository.delete_subscriber(
         session=session, subscriber_id=subscriber_id
     )
 
@@ -92,7 +92,7 @@ async def start_mailing_by_news_type(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    subscribers = await crud.get_subscribers_by_news_type_id(
+    subscribers = await repository.get_subscribers_by_news_type_id(
         session=session, type_id=type_id
     )
     subscribers_emails = [subscriber.email for subscriber in subscribers]

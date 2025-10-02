@@ -9,7 +9,7 @@ from core.models import User
 from core.db_helper import db_helper
 from api.dependencies import get_current_active_user, verify_active_param_access
 from api.banners.schemas import BannerResponse
-from api.banners import crud
+from api.banners import repository
 
 router = APIRouter()
 
@@ -30,7 +30,7 @@ async def create_banner(
         subdirectory=BANNERS_IMAGES_FOLDER,
     )
 
-    banner = await crud.create_banner(
+    banner = await repository.create_banner(
         session=session,
         image_url=image_url,
         title=title,
@@ -49,7 +49,7 @@ async def get_banners(
     limit: int = Query(6, ge=1),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    banners = await crud.get_banners(
+    banners = await repository.get_banners(
         session=session,
         is_active=is_active,
         skip=skip,
@@ -63,7 +63,7 @@ async def get_banner_by_id(
     banner_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    banner = await crud.get_banner_by_id(session=session, banner_id=banner_id)
+    banner = await repository.get_banner_by_id(session=session, banner_id=banner_id)
     if not banner:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -84,7 +84,9 @@ async def update_banner(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    current_banner = await crud.get_banner_by_id(session=session, banner_id=banner_id)
+    current_banner = await repository.get_banner_by_id(
+        session=session, banner_id=banner_id
+    )
     if not current_banner:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -97,7 +99,7 @@ async def update_banner(
         await file_service.delete_file(current_banner.image_url)
         image_url = await file_service.save_file(image, BANNERS_IMAGES_FOLDER)
 
-    banner = await crud.update_banner(
+    banner = await repository.update_banner(
         session=session,
         current_banner=current_banner,
         image_url=image_url,
@@ -116,7 +118,7 @@ async def delete_banner(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    is_deleted = await crud.delete_banner(session=session, banner_id=banner_id)
+    is_deleted = await repository.delete_banner(session=session, banner_id=banner_id)
     if not is_deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

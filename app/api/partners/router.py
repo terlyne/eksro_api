@@ -9,7 +9,7 @@ from core.db_helper import db_helper
 from core.file.service import file_service, PARTNERS_IMAGES_FOLDER
 from api.dependencies import get_current_active_user
 from api.partners.schemas import PartnerResponse
-from api.partners import crud
+from api.partners import repository
 
 router = APIRouter()
 
@@ -18,7 +18,7 @@ router = APIRouter()
 async def get_partners(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    partners = await crud.get_partners(session=session)
+    partners = await repository.get_partners(session=session)
     return partners
 
 
@@ -27,7 +27,7 @@ async def get_partner_by_id(
     partner_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    partner = await crud.get_partner_by_id(session=session, partner_id=partner_id)
+    partner = await repository.get_partner_by_id(session=session, partner_id=partner_id)
 
     if not partner:
         raise HTTPException(
@@ -51,7 +51,7 @@ async def create_partner(
         upload_file=logo,
         subdirectory=PARTNERS_IMAGES_FOLDER,
     )
-    partner = await crud.create_partner(
+    partner = await repository.create_partner(
         session=session,
         logo_url=logo_url,
         partner_name=partner_name,
@@ -72,7 +72,7 @@ async def update_partner(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    current_partner = await crud.get_partner_by_id(
+    current_partner = await repository.get_partner_by_id(
         session=session, partner_id=partner_id
     )
     if not current_partner:
@@ -90,7 +90,7 @@ async def update_partner(
             subdirectory=PARTNERS_IMAGES_FOLDER,
         )
 
-    partner = await crud.update_partner(
+    partner = await repository.update_partner(
         session=session,
         current_partner=current_partner,
         logo_url=logo_url,
@@ -108,7 +108,7 @@ async def delete_partner(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    is_deleted = await crud.delete_partner(session=session, partner_id=partner_id)
+    is_deleted = await repository.delete_partner(session=session, partner_id=partner_id)
     if not is_deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -1,21 +1,21 @@
 from fastapi import APIRouter
 
-from api.auth.views import router as auth_router
-from api.users.views import router as users_router
-from api.banners.views import router as banners_router
-from api.events.views import router as events_router
-from api.feedbacks.views import router as feedbacks_router
-from api.news.views import router as news_router
-from api.email_templates.views import router as email_templates_router
-from api.partners.views import router as partners_router
-from api.polls.views import router as polls_router
-from api.projects.views import router as projects_router
-from api.subscribers.views import router as subscribers_router
-from api.contacts.views import router as contacts_router
-from api.documents.views import router as documents_router
-from api.site_images.views import router as site_images_router
-from api.files.views import router as files_router
-from api.search.views import router as search_router
+from api.auth.router import router as auth_router
+from api.users.router import router as users_router
+from api.banners.router import router as banners_router
+from api.events.router import router as events_router
+from api.feedbacks.router import router as feedbacks_router
+from api.news.router import router as news_router
+from api.email_templates.router import router as email_templates_router
+from api.partners.router import router as partners_router
+from api.polls.router import router as polls_router
+from api.projects.router import router as projects_router
+from api.subscribers.router import router as subscribers_router
+from api.contacts.router import router as contacts_router
+from api.documents.router import router as documents_router
+from api.site_images.router import router as site_images_router
+from api.files.router import router as files_router
+from api.search.router import router as search_router
 
 
 router = APIRouter()

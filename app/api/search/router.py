@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db_helper import db_helper
-from api.search import crud
+from api.search import repository
 from api.search.schemas import NewsResponseSearch
 
 router = APIRouter()
@@ -14,7 +14,9 @@ async def get_news_suggestions(
     limit: int = Query(5, ge=1, le=10),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    suggestions = await crud.get_suggestions(session=session, query=query, limit=limit)
+    suggestions = await repository.get_suggestions(
+        session=session, query=query, limit=limit
+    )
     return {"suggestions": suggestions}
 
 
@@ -25,7 +27,7 @@ async def get_news_by_query(
     skip: int = Query(0, ge=0),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    news_items = await crud.search_news(
+    news_items = await repository.search_news(
         session=session,
         query=query,
         limit=limit,

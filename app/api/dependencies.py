@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from core.models.user import User, ADMIN_ROLE
 from core.db_helper import db_helper
-from api.users.crud import get_user_by_id
+from api.users.repository import get_user_by_id
 from security import utils as security_utils
 
 oauth2_scheme = OAuth2PasswordBearer(

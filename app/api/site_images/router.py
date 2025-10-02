@@ -9,7 +9,7 @@ from core.db_helper import db_helper
 from core.file.service import file_service, SITE_IMAGES_FOLDER
 from api.dependencies import get_current_active_user
 from api.site_images.schemas import SiteImageResponse
-from api.site_images import crud
+from api.site_images import repository
 
 
 router = APIRouter()
@@ -23,7 +23,7 @@ async def create_site_image(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
     image_url = await file_service.save_file(image, SITE_IMAGES_FOLDER)
-    site_image = await crud.create_site_image(
+    site_image = await repository.create_site_image(
         session=session, name=name, image_url=image_url
     )
     return site_image
@@ -34,7 +34,7 @@ async def get_site_images(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    site_images = await crud.get_site_images(session=session)
+    site_images = await repository.get_site_images(session=session)
     return site_images
 
 
@@ -44,7 +44,7 @@ async def delete_site_image(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    current_site_image = await crud.get_site_image_by_id(
+    current_site_image = await repository.get_site_image_by_id(
         session=session,
         site_image_id=site_image_id,
     )

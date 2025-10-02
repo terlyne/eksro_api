@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse
-from pathlib import Path
 
 from core.config import settings
 

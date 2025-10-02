@@ -16,7 +16,7 @@ from api.news.schemas import (
     NewsTypeCreate,
     NewsTypeResponse,
 )
-from api.news import crud
+from api.news import repository
 
 router = APIRouter()
 
@@ -25,7 +25,7 @@ router = APIRouter()
 async def get_news(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    news = await crud.get_news(session=session)
+    news = await repository.get_news(session=session)
     return news
 
 
@@ -35,7 +35,7 @@ async def get_news_preview(
     limit: int = 10,
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    news = await crud.get_news(
+    news = await repository.get_news(
         session=session,
         skip=skip,
         limit=limit,
@@ -69,7 +69,7 @@ async def create_news(
     image_url = await file_service.save_file(
         upload_file=image, subdirectory=NEWS_IMAGES_FOLDER
     )
-    news = await crud.create_news(
+    news = await repository.create_news(
         session=session,
         title=title,
         news_url=news_url,
@@ -97,7 +97,7 @@ async def update_news(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
     news_date = parse_str_to_date(news_date) if news_date else None
-    current_news = await crud.get_news_by_id(session=session, news_id=news_id)
+    current_news = await repository.get_news_by_id(session=session, news_id=news_id)
     if not current_news:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -112,7 +112,7 @@ async def update_news(
             upload_file=image, subdirectory=NEWS_IMAGES_FOLDER
         )
 
-    news = await crud.update_news(
+    news = await repository.update_news(
         session=session,
         current_news=current_news,
         title=title,
@@ -133,7 +133,7 @@ async def delete_news(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    is_deleted = await crud.delete_news(session=session, news_id=news_id)
+    is_deleted = await repository.delete_news(session=session, news_id=news_id)
     if not is_deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -155,7 +155,7 @@ async def delete_news(
 async def get_news_types(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    return await crud.get_news_types(session=session)
+    return await repository.get_news_types(session=session)
 
 
 @router.post("/types/", response_model=NewsTypeResponse)
@@ -164,7 +164,7 @@ async def create_news_type(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    news_type = await crud.create_news_type(session=session, type=type_in.type)
+    news_type = await repository.create_news_type(session=session, type=type_in.type)
     if not news_type:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -180,7 +180,7 @@ async def update_news_type(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    news_type = await crud.update_news_type(
+    news_type = await repository.update_news_type(
         session=session, type_id=type_id, type_name=type_in.type
     )
     if not news_type:
@@ -197,7 +197,7 @@ async def delete_news_type(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    is_deleted = await crud.delete_news_type(session=session, type_id=type_id)
+    is_deleted = await repository.delete_news_type(session=session, type_id=type_id)
     if not is_deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

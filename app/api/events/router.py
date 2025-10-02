@@ -10,7 +10,7 @@ from core.db_helper import db_helper
 from core.file.service import file_service, EVENTS_IMAGES_FOLDER
 from api.dependencies import get_current_active_user, verify_active_param_access
 from api.events.schemas import EventResponse
-from api.events import crud
+from api.events import repository
 
 
 router = APIRouter()
@@ -23,7 +23,7 @@ async def get_events(
     limit: int = Query(10, ge=1),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    events = await crud.get_events(
+    events = await repository.get_events(
         session=session,
         is_active=is_active,
         skip=skip,
@@ -37,7 +37,7 @@ async def get_event_by_id(
     event_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    event = await crud.get_event_by_id(session=session, event_id=event_id)
+    event = await repository.get_event_by_id(session=session, event_id=event_id)
     if not event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -59,7 +59,7 @@ async def create_event(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
     image_url = await file_service.save_file(image, EVENTS_IMAGES_FOLDER)
-    event = await crud.create_event(
+    event = await repository.create_event(
         session=session,
         title=title,
         description=description,
@@ -84,7 +84,7 @@ async def update_event(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    current_event = await crud.get_event_by_id(session=session, event_id=event_id)
+    current_event = await repository.get_event_by_id(session=session, event_id=event_id)
     if not current_event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -97,7 +97,7 @@ async def update_event(
         await file_service.delete_file(current_event.image_url)
         image_url = await file_service.save_file(image, EVENTS_IMAGES_FOLDER)
 
-    event = await crud.update_event(
+    event = await repository.update_event(
         session=session,
         current_event=current_event,
         title=title,
@@ -117,7 +117,7 @@ async def delete_event(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    is_deleted = await crud.delete_event(session=session, event_id=event_id)
+    is_deleted = await repository.delete_event(session=session, event_id=event_id)
     if not is_deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

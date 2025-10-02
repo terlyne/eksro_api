@@ -10,7 +10,7 @@ from api.dependencies import (
     verify_active_param_access,
     get_current_user_optional,
 )
-from api.polls import crud
+from api.polls import repository
 from api.polls.schemas import (
     PollResponse,
     PollCreate,
@@ -28,7 +28,7 @@ async def get_polls(
     is_active: bool = Depends(verify_active_param_access),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    polls = await crud.get_polls(
+    polls = await repository.get_polls(
         session=session,
         is_active=is_active,
     )
@@ -41,7 +41,7 @@ async def get_poll_by_id(
     user: User | None = Depends(get_current_user_optional),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    poll = await crud.get_poll_by_id(session=session, poll_id=poll_id)
+    poll = await repository.get_poll_by_id(session=session, poll_id=poll_id)
     if not poll:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -62,7 +62,7 @@ async def get_answers_by_poll_id(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    current_poll = await crud.get_poll_by_id(
+    current_poll = await repository.get_poll_by_id(
         session=session,
         poll_id=poll_id,
     )
@@ -72,7 +72,7 @@ async def get_answers_by_poll_id(
             detail="Poll not found",
         )
 
-    answers = await crud.get_answers_by_poll(
+    answers = await repository.get_answers_by_poll(
         session=session,
         current_poll=current_poll,
     )
@@ -87,7 +87,7 @@ async def answer_to_poll(
     user: User | None = Depends(get_current_user_optional),
     session: AsyncSession = Depends(db_helper.session_getter),
 ) -> AnswerResponse:
-    current_poll = await crud.get_poll_by_id(session=session, poll_id=poll_id)
+    current_poll = await repository.get_poll_by_id(session=session, poll_id=poll_id)
     if not current_poll:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -101,7 +101,7 @@ async def answer_to_poll(
                 detail="Permission denied",
             )
 
-    answer = await crud.answer_to_poll(
+    answer = await repository.answer_to_poll(
         session=session,
         current_poll=current_poll,
         answer_in=answer_in,
@@ -116,7 +116,7 @@ async def create_poll(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    poll = await crud.create_poll(session=session, poll_in=poll_in)
+    poll = await repository.create_poll(session=session, poll_in=poll_in)
     return poll
 
 
@@ -127,14 +127,14 @@ async def update_poll(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    current_poll = await crud.get_poll_by_id(session=session, poll_id=poll_id)
+    current_poll = await repository.get_poll_by_id(session=session, poll_id=poll_id)
     if not current_poll:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Poll not found",
         )
 
-    poll = await crud.update_poll(
+    poll = await repository.update_poll(
         session=session,
         current_poll=current_poll,
         poll_in=poll_in,
@@ -148,13 +148,13 @@ async def delete_poll(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    current_poll = await crud.get_poll_by_id(session=session, poll_id=poll_id)
+    current_poll = await repository.get_poll_by_id(session=session, poll_id=poll_id)
     if not current_poll:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Poll not found",
         )
 
-    await crud.delete_poll(session=session, current_poll=current_poll)
+    await repository.delete_poll(session=session, current_poll=current_poll)
 
     return {"message": "success"}

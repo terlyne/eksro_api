@@ -17,9 +17,9 @@ from api.auth.helpers import (
     TOKEN_TYPE_ACCESS,
     TOKEN_TYPE_REFRESH,
 )
-from api.auth import crud
+from api.auth import repository
 from api.dependencies import get_current_admin
-from api.users import crud as users_crud
+from api.users import repository as users_crud
 from api.users.schemas import UserResponse
 from api.auth.schemas import (
     UserRegister,
@@ -50,7 +50,7 @@ async def register_user(
         # Проверяем токен в URL
         check_jwt(token=token)
 
-        user = await crud.register_user(session=session, user_in=user_in)
+        user = await repository.register_user(session=session, user_in=user_in)
 
         token_register_confirmation = create_jwt_without_type(
             payload={"sub": str(user.id)}
@@ -109,7 +109,7 @@ async def confirm_user_registration(
 ):
     try:
         user_id = check_jwt(token=token)["sub"]
-        await crud.confirm_registration(session=session, user_id=user_id)
+        await repository.confirm_registration(session=session, user_id=user_id)
 
     except ExpiredSignatureError:
         raise HTTPException(
@@ -135,7 +135,7 @@ async def login_user(
     )
 
     #  Логиним пользователя
-    user = await crud.login_user(
+    user = await repository.login_user(
         session=session,
         username_or_email=form_data.username,
         password=form_data.password,
@@ -171,7 +171,7 @@ async def login_user(
     ip_address = request.client.host
 
     # Добавляем refresh токен в БД
-    await crud.add_refresh_token(
+    await repository.add_refresh_token(
         session=session,
         token=RefreshTokenCreate(
             jti=refresh_token_jti,
@@ -201,7 +201,7 @@ async def refresh_tokens(
     user_id = refresh_token_payload["sub"]
 
     # Получаем токен из БД
-    refresh_token_from_db = await crud.get_refresh_token(session=session, jti=jti)
+    refresh_token_from_db = await repository.get_refresh_token(session=session, jti=jti)
 
     if not refresh_token_from_db or refresh_token_from_db.is_revoked:
         raise HTTPException(
@@ -219,7 +219,7 @@ async def refresh_tokens(
     ):
 
         # Отзываем из-за аномалии
-        await crud.revoke_refresh_token(session, jti)
+        await repository.revoke_refresh_token(session, jti)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Suspicious activity detected",
@@ -234,7 +234,7 @@ async def refresh_tokens(
         )
 
     # Отзываем старый токен (после всех проверок)
-    await crud.revoke_refresh_token(session=session, jti=jti)
+    await repository.revoke_refresh_token(session=session, jti=jti)
 
     # Выпускаем новые access и refresh токены
     access_token = create_jwt(
@@ -258,7 +258,7 @@ async def refresh_tokens(
     ip_address = request.client.host
 
     # Добавляем refresh токен в БД
-    await crud.add_refresh_token(
+    await repository.add_refresh_token(
         session=session,
         token=RefreshTokenCreate(
             jti=refresh_token_jti,
@@ -284,7 +284,7 @@ async def logout_device(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
     jti = refresh_token_payload["jti"]
-    await crud.revoke_refresh_token(session=session, jti=jti)
+    await repository.revoke_refresh_token(session=session, jti=jti)
 
 
 @router.post("/logout-all/")
@@ -293,7 +293,7 @@ async def logout_all_devices(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
     user_id = refresh_token_payload["sub"]
-    await crud.revoke_refresh_tokens(session=session, user_id=user_id)
+    await repository.revoke_refresh_tokens(session=session, user_id=user_id)
 
 
 @router.post("/change-password/")
@@ -332,7 +332,7 @@ async def confirm_changing_password(
         payload = check_jwt(token=token)
         user_id = payload["sub"]
 
-        user = await crud.change_user_password(
+        user = await repository.change_user_password(
             session=session, user_id=user_id, password=user_in.password
         )
         return user

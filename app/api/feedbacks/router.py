@@ -8,7 +8,7 @@ from core.models import User
 from core.email.service import email_service
 from api.dependencies import get_current_active_user, verify_active_param_access
 from api.feedbacks.schemas import FeedbackResponse, FeedbackCreate, FeedbackAnswer
-from api.feedbacks import crud
+from api.feedbacks import repository
 
 router = APIRouter()
 
@@ -19,7 +19,7 @@ async def get_feedbacks(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    feedbacks = await crud.get_feedbacks(
+    feedbacks = await repository.get_feedbacks(
         session=session,
         is_active=is_active,
     )
@@ -32,7 +32,9 @@ async def get_feedback_by_id(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    feedback = await crud.get_feedback_by_id(session=session, feedback_id=feedback_id)
+    feedback = await repository.get_feedback_by_id(
+        session=session, feedback_id=feedback_id
+    )
     if not feedback:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -48,7 +50,9 @@ async def create_feedback(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
     # Фидбек создают обычные пользователи
-    feedback = await crud.create_feeadback(session=session, feedback_in=feedback_in)
+    feedback = await repository.create_feeadback(
+        session=session, feedback_in=feedback_in
+    )
     return feedback
 
 
@@ -58,7 +62,9 @@ async def delete_feedback(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    is_deleted = await crud.delete_feedback(session=session, feedback_id=feedback_id)
+    is_deleted = await repository.delete_feedback(
+        session=session, feedback_id=feedback_id
+    )
     if not is_deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -76,7 +82,7 @@ async def answer_feedback(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
     """Эндпоинт для ответа с админ-панели на feedback"""
-    feedback = await crud.answer_feedback(
+    feedback = await repository.answer_feedback(
         session=session, feedback_id=feedback_id, feedback_answer=feedback_answer
     )
     if not feedback:

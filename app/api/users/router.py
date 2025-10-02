@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import User
 from core.db_helper import db_helper
 from api.dependencies import get_current_active_user, get_current_admin
-from api.users import crud
+from api.users import repository
 from api.users.schemas import UserResponse, UserResponseForAdmin, UserUpdate
 from api.auth.schemas import UserChangePassword
-from api.auth import crud as auth_crud
+from api.auth import repository as auth_crud
 
 
 router = APIRouter()
@@ -29,7 +29,7 @@ async def update_user(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    user = await crud.update_user(session=session, user_update=user_update)
+    user = await repository.update_user(session=session, user_update=user_update)
     return user
 
 
@@ -39,7 +39,7 @@ async def get_user_by_id(
     admin: User = Depends(get_current_admin),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    user = await crud.get_user_by_id(session=session, user_id=user_id)
+    user = await repository.get_user_by_id(session=session, user_id=user_id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -57,7 +57,7 @@ async def get_users(
     admin: User = Depends(get_current_admin),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    users = await crud.get_users(
+    users = await repository.get_users(
         session=session, skip=skip, limit=limit, is_active=is_active
     )
     return users
@@ -69,7 +69,7 @@ async def deactivate_user(
     admin: User = Depends(get_current_admin),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    is_deactivated = await crud.deactivate_user(session=session, user_id=user_id)
+    is_deactivated = await repository.deactivate_user(session=session, user_id=user_id)
     if not is_deactivated:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -85,7 +85,7 @@ async def activate_user(
     admin: User = Depends(get_current_admin),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    is_activated = await crud.activate_user(session=session, user_id=user_id)
+    is_activated = await repository.activate_user(session=session, user_id=user_id)
     if not is_activated:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -122,7 +122,7 @@ async def delete_user(
     admin: User = Depends(get_current_admin),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    is_deleted = await crud.delete_user(session=session, user_id=user_id)
+    is_deleted = await repository.delete_user(session=session, user_id=user_id)
     if not is_deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

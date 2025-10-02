@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import User, RefreshToken
 from security.utils import validate_password
 from api.auth.schemas import UserRegister, RefreshTokenCreate
-from api.users import crud as users_crud
+from api.users import repository as users_crud
 
 
 async def register_user(session: AsyncSession, user_in: UserRegister) -> User:
