@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import select, delete, desc
+from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import Banner
@@ -9,12 +9,16 @@ from core.models import Banner
 async def create_banner(
     session: AsyncSession,
     image_url: str,
+    title: str,
+    description: str,
     redirect_url: str,
     is_active: bool,
     count_order: int,
 ) -> Banner:
     banner = Banner(
         image_url=image_url,
+        title=title,
+        description=description,
         redirect_url=redirect_url,
         is_active=is_active,
         count_order=count_order,

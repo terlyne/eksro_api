@@ -17,6 +17,8 @@ router = APIRouter()
 @router.post("/", response_model=BannerResponse)
 async def create_banner(
     image: UploadFile,
+    title: Annotated[str, Form()],
+    description: Annotated[str, Form()],
     redirect_url: Annotated[str, Form()],
     count_order: Annotated[int, Form(gt=0)],
     is_active: Annotated[bool, Form()] = True,
@@ -32,6 +34,8 @@ async def create_banner(
     banner = await crud.create_banner(
         session=session,
         image_url=image_url,
+        title=title,
+        description=description,
         redirect_url=redirect_url,
         is_active=is_active,
         count_order=count_order,
@@ -75,6 +79,8 @@ async def get_banner_by_id(
 async def update_banner(
     banner_id: uuid.UUID,
     image: UploadFile | None = None,
+    title: Annotated[str | None, Form()] = None,
+    description: Annotated[str | None, Form()] = None,
     redirect_url: Annotated[str | None, Form()] = None,
     count_order: Annotated[int | None, Form(gt=0)] = None,
     is_active: Annotated[bool | None, Form()] = None,
@@ -98,6 +104,8 @@ async def update_banner(
         session=session,
         current_banner=current_banner,
         image_url=image_url,
+        title=title,
+        description=description,
         redirect_url=redirect_url,
         count_order=count_order,
         is_active=is_active,

@@ -7,6 +7,8 @@ from core.models.mixins.id import IdMixin
 
 class Banner(Base, IdMixin):
     image_url: Mapped[str] = mapped_column(Text())
+    title: Mapped[str] = mapped_column(Text())
+    description: Mapped[str] = mapped_column(Text())
     redirect_url: Mapped[str] = mapped_column(
         Text()
     )  # URL при нажатии на который будет перенаправляться пользователь (URL страницы проекта)
