@@ -6,7 +6,7 @@ from pydantic import BaseModel, EmailStr, Field
 
 class FeedbackBase(BaseModel):
     name: str
-    phone: Annotated[str, Field(max_length=30)]
+    phone: Annotated[str | None, Field(max_length=30)] = None
     email: Annotated[EmailStr, Field(max_length=320)]
     message: str
 

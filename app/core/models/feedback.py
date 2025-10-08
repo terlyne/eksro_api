@@ -7,7 +7,7 @@ from core.models.mixins.id import IdMixin
 
 class Feedback(Base, IdMixin):
     name: Mapped[str] = mapped_column(Text())
-    phone: Mapped[str] = mapped_column(String(30))
+    phone: Mapped[str | None] = mapped_column(String(30), nullable=True)
     email: Mapped[str | None] = mapped_column(String(320))
     message: Mapped[str] = mapped_column(Text())
     is_answered: Mapped[bool] = mapped_column(default=False)

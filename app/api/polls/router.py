@@ -57,6 +57,7 @@ async def get_poll_by_id(
 
     return poll
 
+
 @router.get("/{poll_id}/answers/", response_model=list[AnswerResponse])
 async def get_answers_by_poll_id(
     poll_id: uuid.UUID,
