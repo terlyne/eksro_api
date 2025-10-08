@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% block style %}
+<style>
+  .title {
+    color: #2563eb;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: white;
+    color: #2563eb;
+    border: 2px solid #2563eb;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .button:hover {
+    background-color: #2563eb;
+    color: white;
+  }
+
+  .container {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+  }
+</style>
+{% endblock %} {% block body %}
+<div class="container">
+  <h1 class="title">
+    Здравствуйте! Вам было отправлено приглашение на регистрацию в системе
+    ЭСКРО.
+  </h1>
+  <p>Для регистрации воспользуйтесь кнопкой ниже:</p>
+  <a href="{{ invitation_url }}" class="button">Зарегистрироваться</a>
+  <p>Ссылка действительна в течение часа.</p>
+  <p>С уважением, команда ЭКСРО.</p>
+</div>
+{% endblock %}
