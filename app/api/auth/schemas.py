@@ -9,6 +9,7 @@ class UserRegister(BaseModel):
     email: Annotated[EmailStr, Field(max_length=320)]
     username: Annotated[str, Field(min_length=3, max_length=20)]
     password: Annotated[str, Field(min_length=8)]
+    is_active: bool = True
 
 
 class UserChangePassword(BaseModel):

@@ -51,16 +51,6 @@ async def register_user(
         check_jwt(token=token)
 
         user = await repository.register_user(session=session, user_in=user_in)
-
-        token_register_confirmation = create_jwt_without_type(
-            payload={"sub": str(user.id)}
-        )
-
-        # Отправляем письмо на почту для подтверждения регистрации пользователем
-        await email_service.send_confirmation_register_email(
-            email=user.email, token=token_register_confirmation, username=user.username
-        )
-
         return user
 
     except ExpiredSignatureError:
@@ -96,31 +86,11 @@ async def send_register_invitation(
     )
 
     await email_service.send_register_invitation(
-        email=email, token=register_invitation_token
+        email=email,
+        token=register_invitation_token,
     )
 
     return {"message": "Invitation sent"}
-
-
-@router.post("/confirm-registration/")
-async def confirm_user_registration(
-    token: str,
-    session: AsyncSession = Depends(db_helper.session_getter),
-):
-    try:
-        user_id = check_jwt(token=token)["sub"]
-        await repository.confirm_registration(session=session, user_id=user_id)
-
-    except ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Confirmation token expired",
-        )
-    except (InvalidTokenError, ValueError):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid token",
-        )
 
 
 @router.post("/login/", response_model=TokenInfo)

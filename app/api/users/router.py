@@ -8,7 +8,7 @@ from core.models import User
 from core.db_helper import db_helper
 from api.dependencies import get_current_active_user, get_current_admin
 from api.users import repository
-from api.users.schemas import UserResponse, UserResponseForAdmin, UserUpdate
+from api.users.schemas import UserResponse, UserUpdate
 from api.auth.schemas import UserChangePassword
 from api.auth import repository as auth_crud
 
@@ -43,7 +43,7 @@ async def update_user(
     return user
 
 
-@router.get("/{user_id}/", response_model=UserResponseForAdmin)
+@router.get("/{user_id}/", response_model=UserResponse)
 async def get_user_by_id(
     user_id: uuid.UUID,
     admin: User = Depends(get_current_admin),
@@ -59,7 +59,7 @@ async def get_user_by_id(
     return user
 
 
-@router.get("/", response_model=list[UserResponseForAdmin])
+@router.get("/", response_model=list[UserResponse])
 async def get_users(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=0),

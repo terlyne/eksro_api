@@ -25,25 +25,6 @@ class EmailService:
             auto_reload=True,  # False для prod'а, True для dev'а
         )
 
-    async def send_confirmation_register_email(
-        self, email: str, token: str, username: str
-    ):
-        template = self.env.get_template("confirmation_register.html")
-
-        html_content = template.render(
-            username=username,
-            confirmation_url=f"{settings.frontend.confirmation_register_url}/?token={token}",
-        )
-
-        message = MessageSchema(
-            subject="Подтверждение регистрации",
-            recipients=[email],
-            body=html_content,
-            subtype="html",
-        )
-
-        await self.fast_mail.send_message(message)
-
     async def send_register_invitation(self, email: str, token: str):
         template = self.env.get_template("register_invitation.html")
 

@@ -1,16 +1,18 @@
+import uuid
 from typing import Annotated
 
 from pydantic import BaseModel, EmailStr, Field
 
 
-class UserResponse(BaseModel):
-    email: EmailStr
-    username: str
+class UserBase(BaseModel):
+    id: uuid.UUID
+    email: Annotated[EmailStr, Field(max_length=320)]
+    username: Annotated[str, Field(min_length=3, max_length=20)]
     role: str
 
 
-class UserResponseForAdmin(UserResponse):
-    is_active: bool
+class UserResponse(UserBase):
+    pass
 
 
 class UserUpdate(BaseModel):
