@@ -89,7 +89,7 @@ async def update_document(
 
     document = await repository.update_document(
         session=session,
-        document=current_document,
+        current_document=current_document,
         file_url=file_url,
         title=title,
         is_active=is_active,

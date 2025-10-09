@@ -84,12 +84,6 @@ async def update_event(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    if event_date is not None:
-        try:
-            event_date = datetime.fromisoformat(event_date.replace("Z", "+00:00"))
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid event_date format")
-
     current_event = await repository.get_event_by_id(session=session, event_id=event_id)
     if not current_event:
         raise HTTPException(
@@ -97,8 +91,16 @@ async def update_event(
             detail="Event not found",
         )
 
-    image_url = None
+    parsed_event_date = None
+    if event_date and event_date.strip():
+        try:
+            parsed_event_date = datetime.fromisoformat(
+                event_date.replace("Z", "+00:00")
+            )
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid event_date format")
 
+    image_url = None
     if image:
         await file_service.delete_file(current_event.image_url)
         image_url = await file_service.save_file(image, EVENTS_IMAGES_FOLDER)
@@ -110,7 +112,7 @@ async def update_event(
         description=description,
         image_url=image_url,
         is_active=is_active,
-        event_date=event_date,
+        event_date=parsed_event_date,
         location=location,
     )
 
