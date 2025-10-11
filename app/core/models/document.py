@@ -17,6 +17,8 @@ class Document(Base, IdMixin):
         nullable=True,
     )
 
+    # Название/заголовок документа
     title: Mapped[str] = mapped_column(Text())
+    # Сам файл документа
     file_url: Mapped[str] = mapped_column(Text())
     is_active: Mapped[bool] = mapped_column(default=True, server_default="true")

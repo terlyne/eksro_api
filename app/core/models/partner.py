@@ -6,9 +6,15 @@ from core.models.mixins.id import IdMixin
 
 
 class Partner(Base, IdMixin):
-    logo_url: Mapped[str] = mapped_column(Text())
+    __tablename__ = "partners"
+
+    # Название
     partner_name: Mapped[str] = mapped_column(Text())
+    # Порядок отображения (надо валидировать, чтобы двух партнеров с одинаковым порядком не было)
+    count_order: Mapped[int] = mapped_column(unique=True)
+    # Сайт партнера (опционально)
     partner_url: Mapped[str | None] = mapped_column(
         Text(), nullable=True
     )  # URL сайта партнера
-    count_order: Mapped[int]  # Порядок отображения
+    # Логотип партнера
+    logo_url: Mapped[str] = mapped_column(Text())

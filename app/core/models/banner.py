@@ -6,8 +6,15 @@ from core.models.mixins.id import IdMixin
 
 
 class Banner(Base, IdMixin):
-    image_url: Mapped[str] = mapped_column(Text())
-    title: Mapped[str] = mapped_column(Text())
-    description: Mapped[str] = mapped_column(Text())
+    __tablename__ = "banners"
+
+    # Заголовок
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    # Описание
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    # Активен ли баннер
     is_active: Mapped[bool] = mapped_column(default=True, server_default="true")
-    count_order: Mapped[int]  # Порядок отображения
+    # Изображение баннера
+    image_url: Mapped[str] = mapped_column(Text, nullable=False)
+    # Порядок отображения
+    count_order: Mapped[int] = mapped_column(unique=True, nullable=False)

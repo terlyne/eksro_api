@@ -8,5 +8,7 @@ from core.models.base import Base
 class SiteImage(Base, IdMixin):
     __tablename__ = "site_images"
 
+    # Название
     name: Mapped[str] = mapped_column(Text())
+    # URL изображения
     image_url: Mapped[str] = mapped_column(Text())

@@ -1,14 +1,21 @@
 import uuid
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.db_helper import db_helper
+from core.file.service import file_service, FEEDBACKS_IMAGES_FOLDER
 from core.models import User
-from core.email.service import email_service
-from api.dependencies import get_current_active_user, verify_active_param_access
-from api.feedbacks.schemas import FeedbackResponse, FeedbackCreate, FeedbackAnswer
-from api.feedbacks import repository
+from core.db_helper import db_helper
+from api.dependencies import get_current_active_user
+from api.feedbacks.repository import FeedbackRepository
+from api.feedbacks.schemas import (
+    FeedbackCreate,
+    FeedbackResponse,
+    FeedbackUpdate,
+    FeedbackAnswer,
+)
+
 
 router = APIRouter()
 
@@ -16,89 +23,161 @@ router = APIRouter()
 @router.get("/", response_model=list[FeedbackResponse])
 async def get_feedbacks(
     is_active: bool = Depends(verify_active_param_access),
-    user: User = Depends(get_current_active_user),
+    skip: int = 0,
+    limit: int = 10,
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    feedbacks = await repository.get_feedbacks(
-        session=session,
-        is_active=is_active,
+    feedback_repo = FeedbackRepository(session)
+    feedbacks = (
+        await feedback_repo.get_all_active()
+        if is_active
+        else await feedback_repo.get_all()
     )
-    return feedbacks
+    return feedbacks[skip : skip + limit]
 
 
 @router.get("/{feedback_id}/", response_model=FeedbackResponse)
 async def get_feedback_by_id(
     feedback_id: uuid.UUID,
-    user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    feedback = await repository.get_feedback_by_id(
-        session=session, feedback_id=feedback_id
-    )
+    feedback_repo = FeedbackRepository(session)
+    feedback = await feedback_repo.get_by_id(feedback_id)
     if not feedback:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Feedback not found",
+            detail="Обратная связь не найдена",
         )
-
     return feedback
 
 
 @router.post("/", response_model=FeedbackResponse)
 async def create_feedback(
-    feedback_in: FeedbackCreate,
+    name: Annotated[str, Form()],
+    email: Annotated[str, Form()],
+    message: Annotated[str, Form()],
+    phone: Annotated[str | None, Form()] = None,
+    image: UploadFile | None = None,  # Файл изображения (опционально)
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    # Фидбек создают обычные пользователи
-    feedback = await repository.create_feedback(
-        session=session, feedback_in=feedback_in
+    # Сохраняем изображение (если загружено)
+    image_url = None
+    if image:
+        image_url = await file_service.save_file(
+            upload_file=image,
+            subdirectory=FEEDBACKS_IMAGES_FOLDER,
+        )
+
+    # Создаем запись об обратной связи
+    feedback_repo = FeedbackRepository(session)
+    feedback = await feedback_repo.create(
+        name=name,
+        email=email,
+        message=message,
+        phone=phone,
+        image_url=image_url,
     )
     return feedback
 
 
-@router.delete("/{feedback_id}/")
-async def delete_feedback(
+@router.put("/{feedback_id}/", response_model=FeedbackResponse)
+async def update_feedback(
     feedback_id: uuid.UUID,
-    user: User = Depends(get_current_active_user),
+    name: Annotated[str | None, Form()] = None,
+    email: Annotated[str | None, Form()] = None,
+    message: Annotated[str | None, Form()] = None,
+    phone: Annotated[str | None, Form()] = None,
+    image: UploadFile | None = None,  # Файл изображения (опционально)
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    is_deleted = await repository.delete_feedback(
-        session=session, feedback_id=feedback_id
-    )
-    if not is_deleted:
+    feedback_repo = FeedbackRepository(session)
+    current_feedback = await feedback_repo.get_by_id(feedback_id)
+
+    if not current_feedback:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Feedback not found",
+            detail="Обратная связь не найдена",
         )
 
-    return {"message": "success"}
+    # Если загружено новое изображение, удаляем старое и сохраняем новое
+    image_url = None
+    if image:
+        # Удаляем старое изображение
+        if current_feedback.image_url:
+            await file_service.delete_file(current_feedback.image_url)
+        # Сохраняем новое изображение
+        image_url = await file_service.save_file(
+            upload_file=image,
+            subdirectory=FEEDBACKS_IMAGES_FOLDER,
+        )
+
+    # Обновляем информацию об обратной связи
+    feedback = await feedback_repo.update(
+        obj_id=feedback_id,
+        name=name,
+        email=email,
+        message=message,
+        phone=phone,
+        image_url=image_url,
+    )
+
+    return feedback
+
+
+@router.delete("/{feedback_id}/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_feedback(
+    feedback_id: uuid.UUID,
+    session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
+):
+    feedback_repo = FeedbackRepository(session)
+    current_feedback = await feedback_repo.get_by_id(feedback_id)
+
+    if not current_feedback:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Обратная связь не найдена",
+        )
+
+    # Удаляем изображение
+    if current_feedback.image_url:
+        await file_service.delete_file(current_feedback.image_url)
+
+    # Удаляем запись об обратной связи
+    deleted = await feedback_repo.delete(feedback_id)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Обратная связь не найдена",
+        )
+    return {"message": "Обратная связь успешно удалена"}
 
 
 @router.post("/{feedback_id}/answer/", response_model=FeedbackResponse)
 async def answer_feedback(
-    feedback_answer: FeedbackAnswer,
     feedback_id: uuid.UUID,
-    user: User = Depends(get_current_active_user),
+    feedback_answer: FeedbackAnswer,
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    feedback = await repository.answer_feedback(
-        session=session,
-        feedback_id=feedback_id, 
-        feedback_answer=feedback_answer,
-    )
-    if not feedback:
+    feedback_repo = FeedbackRepository(session)
+    current_feedback = await feedback_repo.get_by_id(feedback_id)
+
+    if not current_feedback:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Feedback not found",
+            detail="Обратная связь не найдена",
         )
 
-    # Отправляем ответ пользователю на почту
-    if feedback.email:
-        await email_service.send_response_to_feedback(
-            email=feedback.email,
-            name=feedback.name,
-            question=feedback.message,
-            response=feedback.response,
-        )
+    # Обновляем информацию об обратной связи с ответом
+    feedback = await feedback_repo.update(
+        obj_id=feedback_id,
+        response=feedback_answer.response,
+        is_answered=True,
+    )
 
     return feedback

@@ -1,14 +1,30 @@
-from sqlalchemy import Text
+from sqlalchemy import String, Text, Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column
 
-from core.models.base import Base
+from core.models.base import Base, SiteSection
 from core.models.mixins.id import IdMixin
 
 
 class Manager(Base, IdMixin):
-    """Модель члена руководства"""
+    __tablename__ = "managers"
 
-    first_name: Mapped[str] = mapped_column(Text())
-    last_name: Mapped[str] = mapped_column(Text())
-    patronymic: Mapped[str] = mapped_column(Text())  # Отчество
-    post: Mapped[str] = mapped_column(Text())  # Занимаемая членом руководства должность
+    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
+    site_section: Mapped[SiteSection] = mapped_column(
+        SQLEnum(SiteSection, name="sitesection_enum")
+    )
+    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
+    subpage: Mapped[str] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    # Фотография члена руководства
+    image_url: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    # ФИО
+    full_name: Mapped[str] = mapped_column(Text())
+    # Должность
+    position: Mapped[str] = mapped_column(Text())
+    # Контактный номер телефона
+    phone: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    # Контактный Email адрес
+    email: Mapped[str | None] = mapped_column(String(320), nullable=True)

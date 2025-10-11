@@ -1,21 +1,22 @@
-from typing import Annotated
 import uuid
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form, UploadFile, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.file.service import file_service, DOCUMENTS_FOLDER
 from core.models import User
 from core.db_helper import db_helper
-from core.file.service import file_service, NEWS_IMAGES_FOLDER
 from api.dependencies import get_current_active_user
-from api.helpers import parse_str_to_date
+from api.news.repository import NewsRepository, NewsTypeRepository
 from api.news.schemas import (
     NewsFullResponse,
     NewsPreviewResponse,
     NewsTypeCreate,
     NewsTypeResponse,
+    NewsTypeUpdate,
 )
-from api.news import repository
+
 
 router = APIRouter()
 
@@ -23,8 +24,10 @@ router = APIRouter()
 @router.get("/", response_model=list[NewsFullResponse])
 async def get_news(
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    news = await repository.get_news(session=session)
+    news_repo = NewsRepository(session)
+    news = await news_repo.get_all()
     return news
 
 
@@ -33,14 +36,12 @@ async def get_news_preview(
     skip: int = 0,
     limit: int = 10,
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    news = await repository.get_news(
-        session=session,
-        skip=skip,
-        limit=limit,
-    )
+    news_repo = NewsRepository(session)
+    news = await news_repo.get_all()
     news_preview = []
-    for news_item in news:
+    for news_item in news[skip : skip + limit]:
         news_preview.append(
             NewsPreviewResponse(
                 id=news_item.id,
@@ -56,20 +57,23 @@ async def get_news_preview(
 async def create_news(
     title: Annotated[str, Form()],
     news_url: Annotated[str, Form()],
+    keywords: Annotated[list[str], Form()],
     image: UploadFile,
     min_text: Annotated[str, Form()],
-    news_date: Annotated[str, Form()],
+    news_date: Annotated[str, Form()],  # Формат: dd.mm.YYYY
     type_id: Annotated[uuid.UUID, Form()],
-    keywords: Annotated[list[str], Form()],
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    news_date = parse_str_to_date(news_date)
+    # Сохраняем изображение новости
     image_url = await file_service.save_file(
-        upload_file=image, subdirectory=NEWS_IMAGES_FOLDER
+        upload_file=image,
+        subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
     )
-    news = await repository.create_news(
-        session=session,
+
+    # Создаем запись о новости
+    news_repo = NewsRepository(session)
+    news = await news_repo.create(
         title=title,
         news_url=news_url,
         keywords=keywords,
@@ -88,32 +92,36 @@ async def update_news(
     title: Annotated[str | None, Form()] = None,
     news_url: Annotated[str | None, Form()] = None,
     keywords: Annotated[list[str] | None, Form()] = None,
-    image: UploadFile | None = None,
+    image: UploadFile | None = None,  # Файл изображения (опционально)
     min_text: Annotated[str | None, Form()] = None,
-    news_date: Annotated[str | None, Form()] = None,
+    news_date: Annotated[str | None, Form()] = None,  # Формат: dd.mm.YYYY
     type_id: Annotated[uuid.UUID | None, Form()] = None,
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    news_date = parse_str_to_date(news_date) if news_date else None
-    current_news = await repository.get_news_by_id(session=session, news_id=news_id)
+    news_repo = NewsRepository(session)
+    current_news = await news_repo.get_by_id(news_id)
+
     if not current_news:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="News not found",
+            detail="Новость не найдена",
         )
 
+    # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
-
     if image:
+        # Удаляем старое изображение
         await file_service.delete_file(current_news.image_url)
+        # Сохраняем новое изображение
         image_url = await file_service.save_file(
-            upload_file=image, subdirectory=NEWS_IMAGES_FOLDER
+            upload_file=image,
+            subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
 
-    news = await repository.update_news(
-        session=session,
-        current_news=current_news,
+    # Обновляем информацию о новости
+    news = await news_repo.update(
+        obj_id=news_id,
         title=title,
         news_url=news_url,
         keywords=keywords,
@@ -126,20 +134,32 @@ async def update_news(
     return news
 
 
-@router.delete("/{news_id}/")
+@router.delete("/{news_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_news(
     news_id: uuid.UUID,
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    is_deleted = await repository.delete_news(session=session, news_id=news_id)
-    if not is_deleted:
+    news_repo = NewsRepository(session)
+    current_news = await news_repo.get_by_id(news_id)
+
+    if not current_news:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="News not found",
+            detail="Новость не найдена",
         )
 
-    return {"message": "success"}
+    # Удаляем изображение
+    await file_service.delete_file(current_news.image_url)
+
+    # Удаляем запись о новости
+    deleted = await news_repo.delete(news_id)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Новость не найдена",
+        )
+    return {"message": "Новость успешно удалена"}
 
 
 # ====================
@@ -153,20 +173,24 @@ async def delete_news(
 @router.get("/types/", response_model=list[NewsTypeResponse])
 async def get_news_types(
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    return await repository.get_news_types(session=session)
+    news_type_repo = NewsTypeRepository(session)
+    return await news_type_repo.get_all()
 
 
 @router.get("/types/{type_id}/", response_model=NewsTypeResponse)
 async def get_news_type_by_id(
     type_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    news_type = await repository.get_news_type_by_id(session=session, type_id=type_id)
+    news_type_repo = NewsTypeRepository(session)
+    news_type = await news_type_repo.get_by_id(type_id)
     if not news_type:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="News type not found",
+            detail="Тип новости не найден",
         )
 
     return news_type
@@ -178,11 +202,12 @@ async def create_news_type(
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    news_type = await repository.create_news_type(session=session, type=type_in.type)
+    news_type_repo = NewsTypeRepository(session)
+    news_type = await news_type_repo.create(**type_in.model_dump())
     if not news_type:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="News type already exists",
+            detail="Тип новости уже существует",
         )
     return news_type
 
@@ -190,41 +215,53 @@ async def create_news_type(
 @router.patch("/types/{type_id}/", response_model=NewsTypeResponse)
 async def update_news_type(
     type_id: uuid.UUID,
-    type_in: NewsTypeCreate,
+    type_in: NewsTypeUpdate,
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    news_type = await repository.update_news_type(
-        session=session, type_id=type_id, type_name=type_in.type
+    news_type_repo = NewsTypeRepository(session)
+    news_type = await news_type_repo.update(
+        type_id, **type_in.model_dump(exclude_unset=True)
     )
     if not news_type:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="News type not found",
+            detail="Тип новости не найден",
         )
+
     return news_type
 
 
-@router.delete("/types/{type_id}/")
+@router.delete("/types/{type_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_news_type(
     type_id: uuid.UUID,
     user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    is_deleted = await repository.delete_news_type(session=session, type_id=type_id)
-    if not is_deleted:
-        news_type = await repository.get_news_type_by_id(
-            session=session, type_id=type_id
-        )
-        if not news_type:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="News type not found",
-            )
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Cannot delete news type. There are news associated with this type",
-            )
+    news_type_repo = NewsTypeRepository(session)
+    current_news_type = await news_type_repo.get_by_id(type_id)
 
-    return {"message": "success"}
+    if not current_news_type:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Тип новости не найден",
+        )
+
+    # Проверяем, есть ли новости с этим типом
+    news_repo = NewsRepository(session)
+    news_with_type = await news_repo.find_all(type_id=type_id)
+
+    if news_with_type:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Невозможно удалить тип новости. Существуют новости с этим типом",
+        )
+
+    # Удаляем тип новости
+    deleted = await news_type_repo.delete(type_id)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Тип новости не найден",
+        )
+    return {"message": "Тип новости успешно удален"}

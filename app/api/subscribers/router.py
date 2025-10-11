@@ -1,19 +1,19 @@
 import uuid
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.file.service import file_service, SUBSCRIBERS_IMAGES_FOLDER
 from core.models import User
 from core.db_helper import db_helper
-from core.email.service import email_service
-from security import utils as security_utils
 from api.dependencies import get_current_active_user
+from api.subscribers.repository import SubscriberRepository
 from api.subscribers.schemas import (
-    SubscriberResponse,
     SubscriberCreate,
-    NewsLetter,
+    SubscriberResponse,
+    SubscriberUpdate,
 )
-from api.subscribers import repository
 
 
 router = APIRouter()
@@ -21,85 +21,82 @@ router = APIRouter()
 
 @router.get("/", response_model=list[SubscriberResponse])
 async def get_subscribers(
-    user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    subscriber = await repository.get_subscribers(session=session)
+    subscriber_repo = SubscriberRepository(session)
+    subscribers = await subscriber_repo.get_all()
+    return subscribers
+
+
+@router.get("/{subscriber_id}/", response_model=SubscriberResponse)
+async def get_subscriber_by_id(
+    subscriber_id: uuid.UUID,
+    session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
+):
+    subscriber_repo = SubscriberRepository(session)
+    subscriber = await subscriber_repo.get_by_id(subscriber_id)
+    if not subscriber:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Подписчик не найден",
+        )
     return subscriber
 
 
 @router.post("/", response_model=SubscriberResponse)
-async def subscribe_to_updates(
-    type_id: uuid.UUID,
-    subscriber_in: SubscriberCreate,
+async def create_subscriber(
+    email: Annotated[str, Form()],
+    type_id: Annotated[uuid.UUID, Form()],
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    subscriber = await repository.create_subscriber(
-        session=session, type_id=type_id, subscriber_in=subscriber_in
+    subscriber_repo = SubscriberRepository(session)
+    subscriber = await subscriber_repo.create(
+        email=email,
+        type_id=type_id,
+    )
+    return subscriber
+
+
+@router.put("/{subscriber_id}/", response_model=SubscriberResponse)
+async def update_subscriber(
+    subscriber_id: uuid.UUID,
+    email: Annotated[str | None, Form()] = None,
+    type_id: Annotated[uuid.UUID | None, Form()] = None,
+    is_confirmed: Annotated[bool | None, Form()] = None,
+    session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
+):
+    subscriber_repo = SubscriberRepository(session)
+    subscriber = await subscriber_repo.update(
+        obj_id=subscriber_id,
+        email=email,
+        type_id=type_id,
+        is_confirmed=is_confirmed,
     )
 
-    # Отправляем пользователю на почту подтверждение рассылки
-    token = security_utils.encode_jwt(
-        payload={
-            "sub": str(subscriber.id),
-        },
-        expire_minutes=None,
-    )
-    await email_service.send_confirmation_subscription(
-        email=subscriber_in.email, token=token
-    )
+    if not subscriber:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Подписчик не найден",
+        )
 
     return subscriber
 
 
-@router.post("/confirm/", response_model=SubscriberResponse)
-async def confirm_subscription(
-    token: str,
-    session: AsyncSession = Depends(db_helper.session_getter),
-):
-    payload = security_utils.decode_jwt(token=token)
-    subscriber_id = payload["sub"]
-    subscription = await repository.confirm_subscription(
-        session=session, subscriber_id=subscriber_id
-    )
-
-    return subscription
-
-
-@router.delete("/{subscriber_id}/")
+@router.delete("/{subscriber_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_subscriber(
     subscriber_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-
-    is_deleted = await repository.delete_subscriber(
-        session=session, subscriber_id=subscriber_id
-    )
-
-    if not is_deleted:
+    subscriber_repo = SubscriberRepository(session)
+    deleted = await subscriber_repo.delete(subscriber_id)
+    if not deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Subscriber not found",
+            detail="Подписчик не найден",
         )
-
-    return {"message": "success"}
-
-
-@router.post("/{type_id}/start-mailing/")
-async def start_mailing_by_news_type(
-    type_id: uuid.UUID,
-    news_letter: NewsLetter,
-    user: User = Depends(get_current_active_user),
-    session: AsyncSession = Depends(db_helper.session_getter),
-):
-    subscribers = await repository.get_subscribers_by_news_type_id(
-        session=session, type_id=type_id
-    )
-    subscribers_emails = [subscriber.email for subscriber in subscribers]
-    await email_service.mailing_to_subscribed(
-        news_title=news_letter.title,
-        news_text=news_letter.text,
-        news_url=news_letter.news_url,
-        emails=subscribers_emails,
-    )
-    return {"message": "success"}
+    return {"message": "Подписчик успешно удален"}

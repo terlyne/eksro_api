@@ -21,7 +21,8 @@ class Poll(Base, IdMixin):
         nullable=True,
     )
 
-    theme: Mapped[str] = mapped_column(String(100))  # Тема опроса
+    # Тема опроса
+    theme: Mapped[str] = mapped_column(String(100))
     is_active: Mapped[bool] = mapped_column(default=True, server_default="true")
 
     answers: Mapped[list["PollAnswer"]] = relationship(

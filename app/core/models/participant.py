@@ -16,5 +16,9 @@ class Participant(Base, IdMixin):
         nullable=True,
     )
 
-    fisrt_name: Mapped[str] = mapped_column(Text())
+    # Имя
+    first_name: Mapped[str] = mapped_column(Text())
+    # Фамилия
     last_name: Mapped[str] = mapped_column(Text())
+    # Фотография участника (опционально)
+    image_url: Mapped[str | None] = mapped_column(Text(), nullable=True)

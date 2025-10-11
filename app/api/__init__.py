@@ -1,47 +1,75 @@
 from fastapi import APIRouter
 
+from api.about_organization.router import router as about_organization_router
+from api.delivered_opportunities.router import router as delivered_opportunities_router
+from api.parent_section.router import router as parent_section_router
+from api.soviet_section.router import router as soviet_section_router
+from api.organization_section.router import router as organization_section_router
+from api.application_form.router import router as application_form_router
+from api.projects.router import router as projects_router
+from api.banners.router import router as banners_router
+from api.news.router import router as news_router
+from api.feedbacks.router import router as feedbacks_router
+from api.polls.router import router as polls_router
+from api.partners.router import router as partners_router
+from api.managers.router import router as managers_router
+from api.participants.router import router as participants_router
+from api.documents.router import router as documents_router
+from api.events.router import router as events_router
+from api.site_images.router import router as site_images_router
+from api.contacts.router import router as contacts_router
 from api.auth.router import router as auth_router
 from api.users.router import router as users_router
-from api.banners.router import router as banners_router
-from api.events.router import router as events_router
-from api.feedbacks.router import router as feedbacks_router
-from api.news.router import router as news_router
-from api.email_templates.router import router as email_templates_router
-from api.partners.router import router as partners_router
-from api.polls.router import router as polls_router
-from api.projects.router import router as projects_router
 from api.subscribers.router import router as subscribers_router
-from api.contacts.router import router as contacts_router
-from api.documents.router import router as documents_router
-from api.site_images.router import router as site_images_router
+from api.email_templates.router import router as email_templates_router
 from api.files.router import router as files_router
 from api.search.router import router as search_router
 
 
 router = APIRouter()
-router.include_router(router=auth_router, prefix="/auth", tags=["Auth"])
-router.include_router(router=users_router, prefix="/users", tags=["Users"])
-router.include_router(router=banners_router, prefix="/banners", tags=["Banners"])
-router.include_router(router=events_router, prefix="/events", tags=["Events"])
-router.include_router(router=feedbacks_router, prefix="/feedbacks", tags=["Feedbacks"])
-router.include_router(router=news_router, prefix="/news", tags=["News"])
+
+# Подключаем маршруты
 router.include_router(
-    router=email_templates_router,
-    prefix="/email-templates",
-    tags=["Email Templates"],
+    about_organization_router, prefix="/about-organization", tags=["about-organization"]
 )
-router.include_router(router=partners_router, prefix="/partners", tags=["Partners"])
-router.include_router(router=polls_router, prefix="/polls", tags=["Polls"])
-router.include_router(router=projects_router, prefix="/projects", tags=["Projects"])
 router.include_router(
-    router=subscribers_router,
-    prefix="/subscribers",
-    tags=["Subscribers"],
+    delivered_opportunities_router,
+    prefix="/delivered-opportunities",
+    tags=["delivered-opportunities"],
 )
-router.include_router(router=documents_router, prefix="/documents", tags=["Documents"])
 router.include_router(
-    router=site_images_router, prefix="/site-images", tags=["Site Images"]
+    parent_section_router, prefix="/parent-section", tags=["parent-section"]
 )
-router.include_router(router=contacts_router, prefix="/contacts", tags=["Contacts"])
-router.include_router(router=files_router, prefix="/files", tags=["Files"])
-router.include_router(router=search_router, prefix="/search", tags=["Search"])
+router.include_router(
+    soviet_section_router, prefix="/soviet-section", tags=["soviet-section"]
+)
+router.include_router(
+    organization_section_router,
+    prefix="/organization-section",
+    tags=["organization-section"],
+)
+router.include_router(
+    application_form_router, prefix="/application-form", tags=["application-form"]
+)
+router.include_router(projects_router, prefix="/projects", tags=["projects"])
+router.include_router(banners_router, prefix="/banners", tags=["banners"])
+router.include_router(news_router, prefix="/news", tags=["news"])
+router.include_router(feedbacks_router, prefix="/feedbacks", tags=["feedbacks"])
+router.include_router(polls_router, prefix="/polls", tags=["polls"])
+router.include_router(partners_router, prefix="/partners", tags=["partners"])
+router.include_router(managers_router, prefix="/managers", tags=["managers"])
+router.include_router(
+    participants_router, prefix="/participants", tags=["participants"]
+)
+router.include_router(documents_router, prefix="/documents", tags=["documents"])
+router.include_router(events_router, prefix="/events", tags=["events"])
+router.include_router(site_images_router, prefix="/site-images", tags=["site-images"])
+router.include_router(contacts_router, prefix="/contacts", tags=["contacts"])
+router.include_router(auth_router, prefix="/auth", tags=["auth"])
+router.include_router(users_router, prefix="/users", tags=["users"])
+router.include_router(subscribers_router, prefix="/subscribers", tags=["subscribers"])
+router.include_router(
+    email_templates_router, prefix="/email-templates", tags=["email-templates"]
+)
+router.include_router(files_router, prefix="/files", tags=["files"])
+router.include_router(search_router, prefix="/search", tags=["search"])

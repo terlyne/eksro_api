@@ -6,21 +6,13 @@ from core.models.mixins.id import IdMixin
 
 
 class Project(Base, IdMixin):
-    title: Mapped[str] = mapped_column(Text())
-    project_url: Mapped[str] = mapped_column(Text())
+    __tablename__ = "projects"
+
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    project_url: Mapped[str] = mapped_column(Text, nullable=False)
+    keywords: Mapped[list[str]] = mapped_column(ARRAY(Text), nullable=False)
+    min_text: Mapped[str] = mapped_column(Text, nullable=False)
+    image_url: Mapped[str] = mapped_column(Text, nullable=False)
+    theme: Mapped[str] = mapped_column(String(255), nullable=False)
+    category: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True, server_default="true")
-
-    # Ключевые слова для поиска внутри сайта
-    keywords: Mapped[list[str]] = mapped_column(ARRAY(Text()))
-
-    # Минимальный текст для отображения на главной странице
-    min_text: Mapped[str] = mapped_column(Text())
-
-    # Изображение для отображения на главной странице
-    image_url: Mapped[str] = mapped_column(Text())
-
-    # Тематика (образование, воспитание, профориентация)
-    theme: Mapped[str] = mapped_column(String(100))
-
-    # Категория (для родителей, для учителей, нормативы)
-    category: Mapped[str] = mapped_column(String(100))

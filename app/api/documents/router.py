@@ -1,48 +1,31 @@
 import uuid
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, Form
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends, UploadFile, Form, HTTPException, status
 
-from core.models import User
 from core.file.service import file_service, DOCUMENTS_FOLDER
+from core.models import User
 from core.db_helper import db_helper
-from api.dependencies import get_current_active_user, verify_active_param_access
-from api.documents import repository
-from api.documents.schemas import DocumentResponse
+from api.dependencies import get_current_active_user
+from api.documents.repository import DocumentRepository
+from api.documents.schemas import (
+    DocumentCreate,
+    DocumentResponse,
+    DocumentUpdate,
+)
 
 
 router = APIRouter()
 
 
-@router.post("/", response_model=DocumentResponse)
-async def upload_document(
-    file: UploadFile,
-    title: Annotated[str, Form()],
-    is_active: Annotated[bool, Form()] = True,
-    user: User = Depends(get_current_active_user),
-    session: AsyncSession = Depends(db_helper.session_getter),
-):
-    file_url = await file_service.save_file(file, DOCUMENTS_FOLDER)
-
-    document = await repository.create_document(
-        session=session,
-        file_url=file_url,
-        title=title,
-        is_active=is_active,
-    )
-    return document
-
-
 @router.get("/", response_model=list[DocumentResponse])
 async def get_documents(
-    is_active: bool = Depends(verify_active_param_access),
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    documents = await repository.get_documents(
-        session=session,
-        is_active=is_active,
-    )
+    doc_repo = DocumentRepository(session)
+    documents = await doc_repo.get_all()
     return documents
 
 
@@ -50,67 +33,101 @@ async def get_documents(
 async def get_document_by_id(
     document_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    document = await repository.get_document_by_id(
-        session=session, document_id=document_id
-    )
+    doc_repo = DocumentRepository(session)
+    document = await doc_repo.get_by_id(document_id)
     if not document:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Document not found",
+            detail="Документ не найден",
         )
-
     return document
 
 
-@router.patch("/{document_id}/", response_model=DocumentResponse)
+@router.post("/", response_model=DocumentResponse)
+async def create_document(
+    title: Annotated[str, Form()],
+    file: UploadFile,  # Файл документа
+    session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
+):
+    # Сохраняем файл документа
+    file_url = await file_service.save_file(
+        upload_file=file,
+        subdirectory=DOCUMENTS_FOLDER,
+    )
+
+    # Создаем запись о документе
+    doc_repo = DocumentRepository(session)
+    document = await doc_repo.create(
+        title=title,
+        file_url=file_url,
+    )
+    return document
+
+
+@router.put("/{document_id}/", response_model=DocumentResponse)
 async def update_document(
     document_id: uuid.UUID,
-    file: UploadFile | None = None,
     title: Annotated[str | None, Form()] = None,
-    is_active: Annotated[bool | None, Form()] = None,
-    user: User = Depends(get_current_active_user),
+    file: UploadFile | None = None,  # Файл документа (опционально)
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    current_document = await repository.get_document_by_id(
-        session=session, document_id=document_id
-    )
+    doc_repo = DocumentRepository(session)
+    current_document = await doc_repo.get_by_id(document_id)
+
     if not current_document:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Document not found",
+            detail="Документ не найден",
         )
 
+    # Если загружен новый файл, удаляем старый и сохраняем новый
     file_url = None
-
     if file:
+        # Удаляем старый файл
         await file_service.delete_file(current_document.file_url)
-        file_url = await file_service.save_file(file, DOCUMENTS_FOLDER)
+        # Сохраняем новый файл
+        file_url = await file_service.save_file(
+            upload_file=file,
+            subdirectory=DOCUMENTS_FOLDER,
+        )
 
-    document = await repository.update_document(
-        session=session,
-        current_document=current_document,
-        file_url=file_url,
+    # Обновляем информацию о документе
+    document = await doc_repo.update(
+        obj_id=document_id,
         title=title,
-        is_active=is_active,
+        file_url=file_url,
     )
 
     return document
 
 
-@router.delete("/{document_id}/")
+@router.delete("/{document_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_document(
     document_id: uuid.UUID,
-    user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    is_deleted = await repository.delete_document(
-        session=session, document_id=document_id
-    )
-    if not is_deleted:
+    doc_repo = DocumentRepository(session)
+    current_document = await doc_repo.get_by_id(document_id)
+
+    if not current_document:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Document not found",
+            detail="Документ не найден",
         )
 
-    return {"message": "success"}
+    # Удаляем файл
+    await file_service.delete_file(current_document.file_url)
+
+    # Удаляем запись о документе
+    deleted = await doc_repo.delete(document_id)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Документ не найден",
+        )
+    return {"message": "Документ успешно удален"}

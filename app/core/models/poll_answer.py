@@ -24,7 +24,8 @@ class PollAnswer(Base, IdMixin):
         nullable=True,
     )
 
-    answer_text: Mapped[str] = mapped_column(Text())  # Текст ответа
+    # Текст ответа пользователя
+    answer_text: Mapped[str] = mapped_column(Text())
     poll_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("polls.id"))
 
     poll: Mapped["Poll"] = relationship(back_populates="answers")

@@ -24,6 +24,7 @@ class NewsType(Base, IdMixin):
     )
 
     __tablename__ = "news_types"
+    # Тип новости
     type: Mapped[str] = mapped_column(String(100))
     subscribers: Mapped[list["Subscriber"]] = relationship(back_populates="type")
     news: Mapped[list["News"]] = relationship(back_populates="type")

@@ -18,6 +18,7 @@ from core.admin.service import AdminService
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+from api.managers.router import router as managers_router
     async with db_helper.session_factory() as session:  # Создаем администратора
         await AdminService.create_admin(session=session)
 

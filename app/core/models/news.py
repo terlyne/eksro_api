@@ -25,16 +25,19 @@ class News(Base, IdMixin):
         nullable=True,
     )
 
+    # Заголовок новости
     title: Mapped[str] = mapped_column(Text())
-    news_url: Mapped[str] = mapped_column(Text())  # Ссылка на новость
-
-    # Ключевые слова для поиска внутри сайта
+    # Ссылка на новость
+    news_url: Mapped[str] = mapped_column(Text())
+    # Ключевые слова
     keywords: Mapped[list[str]] = mapped_column(ARRAY(Text()))
+    # Изображение новости
     image_url: Mapped[str] = mapped_column(Text())
-    min_text: Mapped[str] = mapped_column(
-        Text()
-    )  # Минимальный текст для отображения на главной странице
-    news_date: Mapped[date]  # Дата новости
+    # Минимальный текст/описание новости
+    min_text: Mapped[str] = mapped_column(Text())
+    # Дата новости (формата dd.mm.YYYY)
+    news_date: Mapped[date]
+    # Тип новости
     type_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("news_types.id"))
 
     type: Mapped["NewsType"] = relationship(

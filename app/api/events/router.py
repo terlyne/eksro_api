@@ -1,16 +1,19 @@
-from typing import Annotated
-from datetime import datetime
 import uuid
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, status, Depends, Form, UploadFile, Query
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.file.service import file_service, EVENTS_IMAGES_FOLDER
 from core.models import User
 from core.db_helper import db_helper
-from core.file.service import file_service, EVENTS_IMAGES_FOLDER
-from api.dependencies import get_current_active_user, verify_active_param_access
-from api.events.schemas import EventResponse
-from api.events import repository
+from api.dependencies import get_current_active_user
+from api.events.repository import EventRepository
+from api.events.schemas import (
+    EventCreate,
+    EventResponse,
+    EventUpdate,
+)
 
 
 router = APIRouter()
@@ -18,17 +21,11 @@ router = APIRouter()
 
 @router.get("/", response_model=list[EventResponse])
 async def get_events(
-    is_active: bool = Depends(verify_active_param_access),
-    skip: int = Query(0, ge=0),
-    limit: int = Query(10, ge=1),
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    events = await repository.get_events(
-        session=session,
-        is_active=is_active,
-        skip=skip,
-        limit=limit,
-    )
+    event_repo = EventRepository(session)
+    events = await event_repo.get_all()
     return events
 
 
@@ -36,14 +33,15 @@ async def get_events(
 async def get_event_by_id(
     event_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    event = await repository.get_event_by_id(session=session, event_id=event_id)
+    event_repo = EventRepository(session)
+    event = await event_repo.get_by_id(event_id)
     if not event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Event not found",
+            detail="Мероприятие не найдено",
         )
-
     return event
 
 
@@ -51,85 +49,105 @@ async def get_event_by_id(
 async def create_event(
     title: Annotated[str, Form()],
     description: Annotated[str, Form()],
-    image: UploadFile,
-    is_active: Annotated[bool, Form()],
-    event_date: Annotated[datetime | None, Form()] = None,
+    event_date: Annotated[str | None, Form()] = None,  # Формат: dd.mm.YYYY hh:mm
     location: Annotated[str | None, Form()] = None,
-    user: User = Depends(get_current_active_user),
+    image: UploadFile | None = None,  # Файл изображения (опционально)
+    is_active: Annotated[bool, Form()] = True,
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    image_url = await file_service.save_file(image, EVENTS_IMAGES_FOLDER)
-    event = await repository.create_event(
-        session=session,
+    # Сохраняем изображение мероприятия (если загружено)
+    image_url = None
+    if image:
+        image_url = await file_service.save_file(
+            upload_file=image,
+            subdirectory=EVENTS_IMAGES_FOLDER,
+        )
+
+    # Создаем запись о мероприятии
+    event_repo = EventRepository(session)
+    event = await event_repo.create(
         title=title,
         description=description,
-        image_url=image_url,
-        is_active=is_active,
         event_date=event_date,
         location=location,
+        image_url=image_url,
+        is_active=is_active,
     )
-
     return event
 
 
-@router.patch("/{event_id}/", response_model=EventResponse)
+@router.put("/{event_id}/", response_model=EventResponse)
 async def update_event(
     event_id: uuid.UUID,
     title: Annotated[str | None, Form()] = None,
     description: Annotated[str | None, Form()] = None,
-    image: UploadFile | None = None,
-    is_active: Annotated[bool | None, Form()] = None,
-    event_date: Annotated[str | None, Form()] = None,
+    event_date: Annotated[str | None, Form()] = None,  # Формат: dd.mm.YYYY hh:mm
     location: Annotated[str | None, Form()] = None,
-    user: User = Depends(get_current_active_user),
+    image: UploadFile | None = None,  # Файл изображения (опционально)
+    is_active: Annotated[bool | None, Form()] = None,
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    current_event = await repository.get_event_by_id(session=session, event_id=event_id)
+    event_repo = EventRepository(session)
+    current_event = await event_repo.get_by_id(event_id)
+
     if not current_event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Event not found",
+            detail="Мероприятие не найдено",
         )
 
-    parsed_event_date = None
-    if event_date and event_date.strip():
-        try:
-            parsed_event_date = datetime.fromisoformat(
-                event_date.replace("Z", "+00:00")
-            )
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid event_date format")
-
+    # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
-        await file_service.delete_file(current_event.image_url)
-        image_url = await file_service.save_file(image, EVENTS_IMAGES_FOLDER)
+        # Удаляем старое изображение
+        if current_event.image_url:
+            await file_service.delete_file(current_event.image_url)
+        # Сохраняем новое изображение
+        image_url = await file_service.save_file(
+            upload_file=image,
+            subdirectory=EVENTS_IMAGES_FOLDER,
+        )
 
-    event = await repository.update_event(
-        session=session,
-        current_event=current_event,
+    # Обновляем информацию о мероприятии
+    event = await event_repo.update(
+        obj_id=event_id,
         title=title,
         description=description,
+        event_date=event_date,
+        location=location,
         image_url=image_url,
         is_active=is_active,
-        event_date=parsed_event_date,
-        location=location,
     )
 
     return event
 
 
-@router.delete("/{event_id}/")
+@router.delete("/{event_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_event(
     event_id: uuid.UUID,
-    user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_helper.session_getter),
+    user: User = Depends(get_current_active_user),
 ):
-    is_deleted = await repository.delete_event(session=session, event_id=event_id)
-    if not is_deleted:
+    event_repo = EventRepository(session)
+    current_event = await event_repo.get_by_id(event_id)
+
+    if not current_event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Event not found",
+            detail="Мероприятие не найдено",
         )
 
-    return {"message": "success"}
+    # Удаляем изображение
+    if current_event.image_url:
+        await file_service.delete_file(current_event.image_url)
+
+    # Удаляем запись о мероприятии
+    deleted = await event_repo.delete(event_id)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Мероприятие не найдено",
+        )
+    return {"message": "Мероприятие успешно удалено"}

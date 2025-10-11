@@ -24,6 +24,8 @@ class Subscriber(Base, IdMixin):
         nullable=True,
     )
 
+    # Тип новости
+    type_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("news_types.id"))
     email: Mapped[str] = mapped_column(String(320))
     subscribed_at: Mapped[date] = mapped_column(
         Date,
@@ -31,7 +33,6 @@ class Subscriber(Base, IdMixin):
         default=datetime.now(timezone.utc).date(),
     )
     is_confirmed: Mapped[bool] = mapped_column(default=False, server_default="false")
-    type_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("news_types.id"))
 
     type: Mapped["NewsType"] = relationship(
         back_populates="subscribers",
