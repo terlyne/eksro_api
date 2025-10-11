@@ -1,18 +1,11 @@
-from typing import TYPE_CHECKING
-
-from sqlalchemy import String, Enum as SQLEnum
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Text, String, Enum as SQLEnum
+from sqlalchemy.orm import Mapped, mapped_column
 
 from core.models.base import Base, SiteSection
 from core.models.mixins.id import IdMixin
 
 
-if TYPE_CHECKING:
-    from core.models.subscriber import Subscriber
-    from core.models.news import News
-
-
-class NewsType(Base, IdMixin):
+class Participant(Base, IdMixin):
     # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
     site_section: Mapped[SiteSection] = mapped_column(
         SQLEnum(SiteSection, name="sitesection_enum")
@@ -23,7 +16,5 @@ class NewsType(Base, IdMixin):
         nullable=True,
     )
 
-    __tablename__ = "news_types"
-    type: Mapped[str] = mapped_column(String(100))
-    subscribers: Mapped[list["Subscriber"]] = relationship(back_populates="type")
-    news: Mapped[list["News"]] = relationship(back_populates="type")
+    fisrt_name: Mapped[str] = mapped_column(Text())
+    last_name: Mapped[str] = mapped_column(Text())

@@ -3,6 +3,9 @@ from core.models.user import User
 from core.models.banner import Banner
 from core.models.event import Event
 from core.models.feedback import Feedback
+from core.models.contact import Contact
+from core.models.manager import Manager
+from core.models.participant import Participant
 from core.models.news import News
 from core.models.partner import Partner
 from core.models.poll import Poll
@@ -21,6 +24,9 @@ all = (
     "Banner",
     "Event",
     "Feedback",
+    "Contact",
+    "Manager",
+    "Participant",
     "News",
     "Partner",
     "Poll",

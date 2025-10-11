@@ -9,7 +9,9 @@ from core.models.user import User, ADMIN_ROLE
 
 
 class AdminService:
-    async def create_admin(self, session: AsyncSession) -> bool:
+
+    @classmethod
+    async def create_admin(cls, session: AsyncSession) -> bool:
         # Проверяем, не существует ли уже админ
         exisiting_admin = await session.scalar(
             select(User).where(User.role == ADMIN_ROLE)
@@ -28,10 +30,3 @@ class AdminService:
 
         session.add(admin)
         await session.commit()
-
-    def _generate_random_password(self, length: int = 16) -> str:
-        alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
-        return "".join(secrets.choice(alphabet) for _ in range(length))
-
-
-admin_service = AdminService()

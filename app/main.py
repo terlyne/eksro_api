@@ -2,7 +2,6 @@ import os
 import asyncio
 from typing import AsyncGenerator, Any
 from contextlib import asynccontextmanager
-from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
@@ -14,13 +13,13 @@ from core.config import settings
 from core.db_helper import db_helper
 from core.models import Base
 from api import router as api_router
-from core.admin.service import admin_service
+from core.admin.service import AdminService
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     async with db_helper.session_factory() as session:  # Создаем администратора
-        await admin_service.create_admin(session=session)
+        await AdminService.create_admin(session=session)
 
     # Запускаем cron на очистку таблицы с токенами
     cleanup_tokens_task = asyncio.create_task(setup_cleanup_tokens())

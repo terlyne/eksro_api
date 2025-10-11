@@ -5,28 +5,28 @@ from core.config import settings, BASE_DIR
 
 
 class EmailService:
-    def __init__(self):
-        self.config = ConnectionConfig(
-            MAIL_USERNAME=settings.email.username,
-            MAIL_PASSWORD=settings.email.password,
-            MAIL_FROM=settings.email.mail_from,
-            MAIL_FROM_NAME=settings.email.mail_from_name,
-            MAIL_PORT=settings.email.port,
-            MAIL_SERVER=settings.email.server,
-            MAIL_STARTTLS=settings.email.starttls,
-            MAIL_SSL_TLS=settings.email.ssl_tls,
-            USE_CREDENTIALS=settings.email.use_credentials,
-        )
-        self.fast_mail = FastMail(self.config)
-        self.templates_path = BASE_DIR / "app" / "core" / "email" / "templates"
-        self.env = Environment(
-            loader=FileSystemLoader(self.templates_path),
-            autoescape=True,
-            auto_reload=True,  # False для prod'а, True для dev'а
-        )
+    config = ConnectionConfig(
+        MAIL_USERNAME=settings.email.username,
+        MAIL_PASSWORD=settings.email.password,
+        MAIL_FROM=settings.email.mail_from,
+        MAIL_FROM_NAME=settings.email.mail_from_name,
+        MAIL_PORT=settings.email.port,
+        MAIL_SERVER=settings.email.server,
+        MAIL_STARTTLS=settings.email.starttls,
+        MAIL_SSL_TLS=settings.email.ssl_tls,
+        USE_CREDENTIALS=settings.email.use_credentials,
+    )
+    fast_mail = FastMail(config)
+    templates_path = BASE_DIR / "app" / "core" / "email" / "templates"
+    env = Environment(
+        loader=FileSystemLoader(templates_path),
+        autoescape=True,
+        auto_reload=True,  # False для prod'а, True для dev'а
+    )
 
-    async def send_register_invitation(self, email: str, token: str):
-        template = self.env.get_template("register_invitation.html")
+    @classmethod
+    async def send_register_invitation(cls, email: str, token: str):
+        template = cls.env.get_template("register_invitation.html")
 
         html_content = template.render(
             invitation_url=f"{settings.frontend.register_invitation_url}/?token={token}"
@@ -39,10 +39,11 @@ class EmailService:
             subtype="html",
         )
 
-        await self.fast_mail.send_message(message)
+        await cls.fast_mail.send_message(message)
 
-    async def send_changing_password_url(self, email: str, token: str):
-        template = self.env.get_template("changing_password.html")
+    @classmethod
+    async def send_changing_password_url(cls, email: str, token: str):
+        template = cls.env.get_template("changing_password.html")
 
         html_content = template.render(
             changing_password_url=f"{settings.frontend.changing_password_url}/?token={token}"
@@ -55,16 +56,17 @@ class EmailService:
             subtype="html",
         )
 
-        await self.fast_mail.send_message(message)
+        await cls.fast_mail.send_message(message)
 
+    @classmethod
     async def send_response_to_feedback(
-        self,
+        cls,
         email: str,
         name: str,
         question: str,
         response: str,
     ):
-        template = self.env.get_template("feedback_response.html")
+        template = cls.env.get_template("feedback_response.html")
 
         html_content = template.render(
             name=name,
@@ -79,10 +81,11 @@ class EmailService:
             subtype="html",
         )
 
-        await self.fast_mail.send_message(message)
+        await cls.fast_mail.send_message(message)
 
-    async def send_confirmation_subscription(self, email: str, token: str):
-        template = self.env.get_template("confirmation_subscription.html")
+    @classmethod
+    async def send_confirmation_subscription(cls, email: str, token: str):
+        template = cls.env.get_template("confirmation_subscription.html")
 
         html_content = template.render(
             confirmation_url=f"{settings.frontend.subscription_confirmation_url}/?token={token}",
@@ -95,16 +98,17 @@ class EmailService:
             subtype="html",
         )
 
-        await self.fast_mail.send_message(message)
+        await cls.fast_mail.send_message(message)
 
+    @classmethod
     async def mailing_to_subscribed(
-        self,
+        cls,
         news_title: str,
         news_text: str,
         news_url: str,
         *emails: str,
     ):
-        template = self.env.get_template("mailing.html")
+        template = cls.env.get_template("mailing.html")
 
         html_content = template.render(
             title=news_title,
@@ -119,7 +123,4 @@ class EmailService:
             subtype="html",
         )
 
-        await self.fast_mail.send_message(message)
-
-
-email_service = EmailService()
+        await cls.fast_mail.send_message(message)
