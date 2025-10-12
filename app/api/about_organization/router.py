@@ -28,7 +28,7 @@ async def get_about_organizations(
     return about_organizations
 
 
-@router.get("/{about_organization_id}", response_model=AboutOrganizationResponse)
+@router.get("/{about_organization_id}/", response_model=AboutOrganizationResponse)
 async def get_about_organization_by_id(
     about_organization_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -81,7 +81,7 @@ async def create_about_organization(
     return about_organization
 
 
-@router.put("/{about_organization_id}", response_model=AboutOrganizationResponse)
+@router.put("/{about_organization_id}/", response_model=AboutOrganizationResponse)
 async def update_about_organization(
     about_organization_id: uuid.UUID,
     title: Annotated[str | None, Form()] = None,
@@ -135,7 +135,7 @@ async def update_about_organization(
     return about_organization
 
 
-@router.delete("/{about_organization_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{about_organization_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_about_organization(
     about_organization_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),

@@ -28,7 +28,7 @@ async def get_delivered_opportunities(
     return delivered_opportunities
 
 
-@router.get("/{delivered_opportunity_id}", response_model=DeliveredOpportunityResponse)
+@router.get("/{delivered_opportunity_id}/", response_model=DeliveredOpportunityResponse)
 async def get_delivered_opportunity_by_id(
     delivered_opportunity_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -77,7 +77,7 @@ async def create_delivered_opportunity(
     return delivered_opportunity
 
 
-@router.put("/{delivered_opportunity_id}", response_model=DeliveredOpportunityResponse)
+@router.put("/{delivered_opportunity_id}/", response_model=DeliveredOpportunityResponse)
 async def update_delivered_opportunity(
     delivered_opportunity_id: uuid.UUID,
     name: Annotated[str | None, Form()] = None,
@@ -128,7 +128,7 @@ async def update_delivered_opportunity(
     return delivered_opportunity
 
 
-@router.delete("/{delivered_opportunity_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{delivered_opportunity_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_delivered_opportunity(
     delivered_opportunity_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),

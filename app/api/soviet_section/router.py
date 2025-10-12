@@ -130,7 +130,7 @@ router = APIRouter()
 
 
 # Soviet Support Documents
-@router.get("/support-documents/", response_model=list[SovietSupportDocumentResponse])
+@router.get("/support/documents/", response_model=list[SovietSupportDocumentResponse])
 async def get_soviet_support_documents(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
@@ -140,7 +140,7 @@ async def get_soviet_support_documents(
 
 
 @router.get(
-    "/support-documents/{item_id}/", response_model=SovietSupportDocumentResponse
+    "/support/documents/{item_id}/", response_model=SovietSupportDocumentResponse
 )
 async def get_soviet_support_document_by_id(
     item_id: uuid.UUID,
@@ -156,7 +156,7 @@ async def get_soviet_support_document_by_id(
     return item
 
 
-@router.post("/support-documents/", response_model=SovietSupportDocumentResponse)
+@router.post("/support/documents/", response_model=SovietSupportDocumentResponse)
 async def create_soviet_support_document(
     title: Annotated[str, Form()],
     file: UploadFile,  # Файл документа
@@ -179,7 +179,7 @@ async def create_soviet_support_document(
 
 
 @router.put(
-    "/support-documents/{item_id}/", response_model=SovietSupportDocumentResponse
+    "/support/documents/{item_id}/", response_model=SovietSupportDocumentResponse
 )
 async def update_soviet_support_document(
     item_id: uuid.UUID,
@@ -218,7 +218,7 @@ async def update_soviet_support_document(
     return item
 
 
-@router.delete("/support-documents/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/support/documents/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_soviet_support_document(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -247,7 +247,7 @@ async def delete_soviet_support_document(
 
 
 # Soviet Support Events
-@router.get("/support-events/", response_model=list[SovietSupportEventResponse])
+@router.get("/support/events/", response_model=list[SovietSupportEventResponse])
 async def get_soviet_support_events(
     session: AsyncSession = Depends(db_helper.session_getter),
     is_active: bool = Depends(verify_active_param_access),
@@ -257,7 +257,7 @@ async def get_soviet_support_events(
     return items
 
 
-@router.get("/support-events/{item_id}/", response_model=SovietSupportEventResponse)
+@router.get("/support/events/{item_id}/", response_model=SovietSupportEventResponse)
 async def get_soviet_support_event_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -273,7 +273,7 @@ async def get_soviet_support_event_by_id(
     return item
 
 
-@router.post("/support-events/", response_model=SovietSupportEventResponse)
+@router.post("/support/events/", response_model=SovietSupportEventResponse)
 async def create_soviet_support_event(
     title: Annotated[str, Form()],
     description: Annotated[str, Form()],
@@ -304,7 +304,7 @@ async def create_soviet_support_event(
     return item
 
 
-@router.put("/support-events/{item_id}/", response_model=SovietSupportEventResponse)
+@router.put("/support/events/{item_id}/", response_model=SovietSupportEventResponse)
 async def update_soviet_support_event(
     item_id: uuid.UUID,
     title: Annotated[str | None, Form()] = None,
@@ -351,7 +351,7 @@ async def update_soviet_support_event(
     return item
 
 
-@router.delete("/support-events/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/support/events/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_soviet_support_event(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -382,7 +382,7 @@ async def delete_soviet_support_event(
 
 # Soviet Support Applications
 @router.get(
-    "/support-applications/", response_model=list[SovietSupportApplicationResponse]
+    "/support/applications/", response_model=list[SovietSupportApplicationResponse]
 )
 async def get_soviet_support_applications(
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -394,7 +394,7 @@ async def get_soviet_support_applications(
 
 
 @router.get(
-    "/support-applications/{item_id}/", response_model=SovietSupportApplicationResponse
+    "/support/applications/{item_id}/", response_model=SovietSupportApplicationResponse
 )
 async def get_soviet_support_application_by_id(
     item_id: uuid.UUID,
@@ -411,7 +411,7 @@ async def get_soviet_support_application_by_id(
     return item
 
 
-@router.post("/support-applications/", response_model=SovietSupportApplicationResponse)
+@router.post("/support/applications/", response_model=SovietSupportApplicationResponse)
 async def create_soviet_support_application(
     application_type: Annotated[
         str, Form()
@@ -434,7 +434,7 @@ async def create_soviet_support_application(
 
 
 @router.put(
-    "/support-applications/{item_id}/", response_model=SovietSupportApplicationResponse
+    "/support/applications/{item_id}/", response_model=SovietSupportApplicationResponse
 )
 async def update_soviet_support_application(
     item_id: uuid.UUID,
@@ -468,7 +468,7 @@ async def update_soviet_support_application(
 
 
 @router.delete(
-    "/support-applications/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+    "/support/applications/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_soviet_support_application(
     item_id: uuid.UUID,
@@ -489,7 +489,6 @@ async def delete_soviet_support_application(
 @router.get("/leaders/", response_model=list[SovietLeaderResponse])
 async def get_soviet_leaders(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = SovietLeaderRepository(session)
     items = await repo.get_all()
@@ -500,7 +499,6 @@ async def get_soviet_leaders(
 async def get_soviet_leader_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = SovietLeaderRepository(session)
     item = await repo.get_by_id(item_id)
@@ -611,7 +609,6 @@ async def delete_soviet_leader(
 @router.get("/news/", response_model=list[SovietNewsResponse])
 async def get_soviet_news(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = SovietNewsRepository(session)
     items = await repo.get_all()
@@ -622,7 +619,6 @@ async def get_soviet_news(
 async def get_soviet_news_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = SovietNewsRepository(session)
     item = await repo.get_by_id(item_id)
@@ -768,7 +764,6 @@ async def create_soviet_question(
     phone: Annotated[str | None, Form()] = None,
     response: Annotated[str | None, Form()] = None,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = SovietQuestionRepository(session)
     item = await repo.create(
@@ -841,7 +836,6 @@ async def delete_soviet_question(
 @router.get("/contacts/", response_model=list[SovietContactResponse])
 async def get_soviet_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = SovietContactRepository(session)
     items = await repo.get_all()
@@ -852,7 +846,6 @@ async def get_soviet_contacts(
 async def get_soviet_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = SovietContactRepository(session)
     item = await repo.get_by_id(item_id)
@@ -931,7 +924,6 @@ async def delete_soviet_contact(
 @router.get("/learning/documents/", response_model=list[LearningDocumentResponse])
 async def get_learning_documents(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = LearningDocumentRepository(session)
     items = await repo.get_all()
@@ -942,7 +934,6 @@ async def get_learning_documents(
 async def get_learning_document_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = LearningDocumentRepository(session)
     item = await repo.get_by_id(item_id)
@@ -1046,10 +1037,10 @@ async def delete_learning_document(
 @router.get("/learning/events/", response_model=list[LearningEventResponse])
 async def get_learning_events(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     repo = LearningEventRepository(session)
-    items = await repo.get_all()
+    items = await repo.find_all(is_active=is_active)
     return items
 
 
@@ -1057,10 +1048,10 @@ async def get_learning_events(
 async def get_learning_event_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     repo = LearningEventRepository(session)
-    item = await repo.get_by_id(item_id)
+    item = await repo.find_one(id=item_id, is_active=is_active)
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -1213,7 +1204,6 @@ async def create_learning_application(
     text: Annotated[str, Form()],
     phone: Annotated[str | None, Form()] = None,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = LearningApplicationRepository(session)
     item = await repo.create(
@@ -1282,7 +1272,6 @@ async def delete_learning_application(
 @router.get("/learning/news/", response_model=list[LearningNewsResponse])
 async def get_learning_news(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = LearningNewsRepository(session)
     items = await repo.get_all()
@@ -1293,7 +1282,6 @@ async def get_learning_news(
 async def get_learning_news_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = LearningNewsRepository(session)
     item = await repo.get_by_id(item_id)
@@ -1439,7 +1427,6 @@ async def create_learning_question(
     phone: Annotated[str | None, Form()] = None,
     response: Annotated[str | None, Form()] = None,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = LearningQuestionRepository(session)
     item = await repo.create(
@@ -1512,7 +1499,6 @@ async def delete_learning_question(
 @router.get("/learning/contacts/", response_model=list[LearningContactResponse])
 async def get_learning_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = LearningContactRepository(session)
     items = await repo.get_all()
@@ -1523,7 +1509,6 @@ async def get_learning_contacts(
 async def get_learning_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = LearningContactRepository(session)
     item = await repo.get_by_id(item_id)
@@ -1659,7 +1644,6 @@ async def get_online_conference_regulations(
 async def get_online_conference_regulation_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OnlineConferenceRegulationRepository(session)
     item = await repo.get_by_id(item_id)
@@ -1773,7 +1757,6 @@ async def delete_online_conference_regulation(
 )
 async def get_online_conference_participants(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OnlineConferenceParticipantRepository(session)
     items = await repo.get_all()
@@ -1787,7 +1770,6 @@ async def get_online_conference_participants(
 async def get_online_conference_participant_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OnlineConferenceParticipantRepository(session)
     item = await repo.get_by_id(item_id)
@@ -1908,7 +1890,6 @@ async def delete_online_conference_participant(
 )
 async def get_online_conference_news(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OnlineConferenceNewsRepository(session)
     items = await repo.get_all()
@@ -1921,7 +1902,6 @@ async def get_online_conference_news(
 async def get_online_conference_news_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OnlineConferenceNewsRepository(session)
     item = await repo.get_by_id(item_id)
@@ -2079,7 +2059,6 @@ async def create_online_conference_question(
     phone: Annotated[str | None, Form()] = None,
     response: Annotated[str | None, Form()] = None,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OnlineConferenceQuestionRepository(session)
     item = await repo.create(
@@ -2159,7 +2138,6 @@ async def delete_online_conference_question(
 )
 async def get_online_conference_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OnlineConferenceContactRepository(session)
     items = await repo.get_all()
@@ -2173,7 +2151,6 @@ async def get_online_conference_contacts(
 async def get_online_conference_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OnlineConferenceContactRepository(session)
     item = await repo.get_by_id(item_id)
@@ -2334,7 +2311,6 @@ async def create_podcast_application(
     text: Annotated[str, Form()],
     phone: Annotated[str | None, Form()] = None,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = PodcastApplicationRepository(session)
     item = await repo.create(
@@ -2403,7 +2379,6 @@ async def delete_podcast_application(
 @router.get("/podcast/participants/", response_model=list[PodcastParticipantResponse])
 async def get_podcast_participants(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = PodcastParticipantRepository(session)
     items = await repo.get_all()
@@ -2416,7 +2391,6 @@ async def get_podcast_participants(
 async def get_podcast_participant_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = PodcastParticipantRepository(session)
     item = await repo.get_by_id(item_id)
@@ -2491,7 +2465,6 @@ async def delete_podcast_participant(
 @router.get("/podcast/news/", response_model=list[PodcastNewsResponse])
 async def get_podcast_news(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = PodcastNewsRepository(session)
     items = await repo.get_all()
@@ -2502,7 +2475,6 @@ async def get_podcast_news(
 async def get_podcast_news_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = PodcastNewsRepository(session)
     item = await repo.get_by_id(item_id)
@@ -2617,7 +2589,6 @@ async def delete_podcast_news(
 @router.get("/podcast/contacts/", response_model=list[PodcastContactResponse])
 async def get_podcast_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = PodcastContactRepository(session)
     items = await repo.get_all()
@@ -2628,7 +2599,6 @@ async def get_podcast_contacts(
 async def get_podcast_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = PodcastContactRepository(session)
     item = await repo.get_by_id(item_id)
@@ -2747,7 +2717,6 @@ async def delete_podcast_contact(
 @router.get("/project/news/", response_model=list[ProjectNewsResponse])
 async def get_project_news(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ProjectNewsRepository(session)
     items = await repo.get_all()
@@ -2758,7 +2727,6 @@ async def get_project_news(
 async def get_project_news_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ProjectNewsRepository(session)
     item = await repo.get_by_id(item_id)
@@ -2873,7 +2841,6 @@ async def delete_project_news(
 @router.get("/project/reports/", response_model=list[ProjectReportResponse])
 async def get_project_reports(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ProjectReportRepository(session)
     items = await repo.get_all()
@@ -2884,7 +2851,6 @@ async def get_project_reports(
 async def get_project_report_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ProjectReportRepository(session)
     item = await repo.get_by_id(item_id)
@@ -2955,7 +2921,6 @@ async def delete_project_report(
 @router.get("/competition/documents/", response_model=list[CompetitionDocumentResponse])
 async def get_competition_documents(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = CompetitionDocumentRepository(session)
     items = await repo.get_all()
@@ -2968,7 +2933,6 @@ async def get_competition_documents(
 async def get_competition_document_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = CompetitionDocumentRepository(session)
     item = await repo.get_by_id(item_id)
@@ -3076,7 +3040,6 @@ async def delete_competition_document(
 @router.get("/competition/contacts/", response_model=list[CompetitionContactResponse])
 async def get_competition_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = CompetitionContactRepository(session)
     items = await repo.get_all()
@@ -3089,7 +3052,6 @@ async def get_competition_contacts(
 async def get_competition_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = CompetitionContactRepository(session)
     item = await repo.get_by_id(item_id)
@@ -3168,7 +3130,6 @@ async def delete_competition_contact(
 @router.get("/journal/news/", response_model=list[JournalNewsResponse])
 async def get_journal_news(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = JournalNewsRepository(session)
     items = await repo.get_all()
@@ -3179,7 +3140,6 @@ async def get_journal_news(
 async def get_journal_news_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = JournalNewsRepository(session)
     item = await repo.get_by_id(item_id)
@@ -3294,7 +3254,6 @@ async def delete_journal_news(
 @router.get("/journal/contacts/", response_model=list[JournalContactResponse])
 async def get_journal_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = JournalContactRepository(session)
     items = await repo.get_all()
@@ -3305,7 +3264,6 @@ async def get_journal_contacts(
 async def get_journal_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = JournalContactRepository(session)
     item = await repo.get_by_id(item_id)
