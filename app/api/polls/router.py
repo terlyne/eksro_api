@@ -15,8 +15,8 @@ from api.polls.schemas import (
     PollResponse,
     PollCreate,
     PollUpdate,
-    AnswerCreate,
-    AnswerResponse,
+    PollAnswerCreate as AnswerCreate,
+    PollAnswerResponse as AnswerResponse,
 )
 
 

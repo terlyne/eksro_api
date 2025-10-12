@@ -36,7 +36,7 @@ from api.soviet_section.repository import (
     CompetitionDocumentRepository,
     CompetitionContactRepository,
     JournalNewsRepository,
-    JournalContactRepository
+    JournalContactRepository,
 )
 from api.soviet_section.schemas import (
     SovietSupportDocumentCreate,
@@ -140,7 +140,9 @@ async def get_soviet_support_documents(
     return items
 
 
-@router.get("/support-documents/{item_id}/", response_model=SovietSupportDocumentResponse)
+@router.get(
+    "/support-documents/{item_id}/", response_model=SovietSupportDocumentResponse
+)
 async def get_soviet_support_document_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -168,7 +170,7 @@ async def create_soviet_support_document(
         upload_file=file,
         subdirectory=DOCUMENTS_FOLDER,
     )
-    
+
     # Создаем запись о документе
     repo = SovietSupportDocumentRepository(session)
     item = await repo.create(
@@ -178,7 +180,9 @@ async def create_soviet_support_document(
     return item
 
 
-@router.put("/support-documents/{item_id}/", response_model=SovietSupportDocumentResponse)
+@router.put(
+    "/support-documents/{item_id}/", response_model=SovietSupportDocumentResponse
+)
 async def update_soviet_support_document(
     item_id: uuid.UUID,
     title: Annotated[str | None, Form()] = None,
@@ -188,13 +192,13 @@ async def update_soviet_support_document(
 ):
     repo = SovietSupportDocumentRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Документ поддержки совета не найден",
         )
-    
+
     # Если загружен новый файл, удаляем старый и сохраняем новый
     file_url = None
     if file:
@@ -205,14 +209,14 @@ async def update_soviet_support_document(
             upload_file=file,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о документе
     item = await repo.update(
         obj_id=item_id,
         title=title,
         file_url=file_url,
     )
-    
+
     return item
 
 
@@ -224,16 +228,16 @@ async def delete_soviet_support_document(
 ):
     repo = SovietSupportDocumentRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Документ поддержки совета не найден",
         )
-    
+
     # Удаляем файл
     await file_service.delete_file(current_item.file_url)
-    
+
     # Удаляем запись о документе
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -289,7 +293,7 @@ async def create_soviet_support_event(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = SovietSupportEventRepository(session)
     item = await repo.create(
         title=title,
@@ -316,13 +320,13 @@ async def update_soviet_support_event(
 ):
     repo = SovietSupportEventRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Мероприятие поддержки совета не найдено",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -334,7 +338,7 @@ async def update_soviet_support_event(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о мероприятии
     item = await repo.update(
         obj_id=item_id,
@@ -345,7 +349,7 @@ async def update_soviet_support_event(
         image_url=image_url,
         is_active=is_active,
     )
-    
+
     return item
 
 
@@ -357,17 +361,17 @@ async def delete_soviet_support_event(
 ):
     repo = SovietSupportEventRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Мероприятие поддержки совета не найдено",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись о мероприятии
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -379,7 +383,9 @@ async def delete_soviet_support_event(
 
 
 # Soviet Support Applications
-@router.get("/support-applications/", response_model=list[SovietSupportApplicationResponse])
+@router.get(
+    "/support-applications/", response_model=list[SovietSupportApplicationResponse]
+)
 async def get_soviet_support_applications(
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),
@@ -389,7 +395,9 @@ async def get_soviet_support_applications(
     return items
 
 
-@router.get("/support-applications/{item_id}/", response_model=SovietSupportApplicationResponse)
+@router.get(
+    "/support-applications/{item_id}/", response_model=SovietSupportApplicationResponse
+)
 async def get_soviet_support_application_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -407,7 +415,9 @@ async def get_soviet_support_application_by_id(
 
 @router.post("/support-applications/", response_model=SovietSupportApplicationResponse)
 async def create_soviet_support_application(
-    application_type: Annotated[str, Form()],  # "Консультация", "Вступление в УС", "Другое"
+    application_type: Annotated[
+        str, Form()
+    ],  # "Консультация", "Вступление в УС", "Другое"
     full_name: Annotated[str, Form()],
     phone: Annotated[str, Form()],
     email: Annotated[str, Form()],
@@ -426,10 +436,14 @@ async def create_soviet_support_application(
     return item
 
 
-@router.put("/support-applications/{item_id}/", response_model=SovietSupportApplicationResponse)
+@router.put(
+    "/support-applications/{item_id}/", response_model=SovietSupportApplicationResponse
+)
 async def update_soviet_support_application(
     item_id: uuid.UUID,
-    application_type: Annotated[str | None, Form()] = None,  # "Консультация", "Вступление в УС", "Другое"
+    application_type: Annotated[
+        str | None, Form()
+    ] = None,  # "Консультация", "Вступление в УС", "Другое"
     full_name: Annotated[str | None, Form()] = None,
     phone: Annotated[str | None, Form()] = None,
     email: Annotated[str | None, Form()] = None,
@@ -446,17 +460,19 @@ async def update_soviet_support_application(
         email=email,
         text=text,
     )
-    
+
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Заявка на поддержку совета не найдена",
         )
-    
+
     return item
 
 
-@router.delete("/support-applications/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/support-applications/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_soviet_support_application(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -514,7 +530,7 @@ async def create_soviet_leader(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = SovietLeaderRepository(session)
     item = await repo.create(
         first_name=first_name,
@@ -535,13 +551,13 @@ async def update_soviet_leader(
 ):
     repo = SovietLeaderRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Руководитель совета не найден",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -553,7 +569,7 @@ async def update_soviet_leader(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о руководителе
     item = await repo.update(
         obj_id=item_id,
@@ -561,7 +577,7 @@ async def update_soviet_leader(
         last_name=last_name,
         image_url=image_url,
     )
-    
+
     return item
 
 
@@ -573,17 +589,17 @@ async def delete_soviet_leader(
 ):
     repo = SovietLeaderRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Руководитель совета не найден",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись о руководителе
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -637,7 +653,7 @@ async def create_soviet_news(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = SovietNewsRepository(session)
     item = await repo.create(
         title=title,
@@ -660,13 +676,13 @@ async def update_soviet_news(
 ):
     repo = SovietNewsRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Новость совета не найдена",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -678,7 +694,7 @@ async def update_soviet_news(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о новости
     item = await repo.update(
         obj_id=item_id,
@@ -687,7 +703,7 @@ async def update_soviet_news(
         description=description,
         image_url=image_url,
     )
-    
+
     return item
 
 
@@ -699,17 +715,17 @@ async def delete_soviet_news(
 ):
     repo = SovietNewsRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Новость совета не найдена",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись о новости
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -764,7 +780,9 @@ async def create_soviet_question(
         message=message,
         phone=phone,
         response=response,
-        is_answered=bool(response),  # Автоматически устанавливаем флаг ответа, если есть ответ
+        is_answered=bool(
+            response
+        ),  # Автоматически устанавливаем флаг ответа, если есть ответ
     )
     return item
 
@@ -782,11 +800,11 @@ async def update_soviet_question(
     user: User = Depends(get_current_active_user),
 ):
     repo = SovietQuestionRepository(session)
-    
+
     # Если есть ответ, автоматически устанавливаем флаг ответа
     if response is not None:
         is_answered = True
-    
+
     item = await repo.update(
         obj_id=item_id,
         name=name,
@@ -796,13 +814,13 @@ async def update_soviet_question(
         response=response,
         is_answered=is_answered,
     )
-    
+
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Вопрос совета не найден",
         )
-    
+
     return item
 
 
@@ -886,13 +904,13 @@ async def update_soviet_contact(
         tg_channel=tg_channel,
         vk_group=vk_group,
     )
-    
+
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Контакт совета не найден",
         )
-    
+
     return item
 
 
@@ -951,7 +969,7 @@ async def create_learning_document(
         upload_file=file,
         subdirectory=DOCUMENTS_FOLDER,
     )
-    
+
     # Создаем запись о документе
     repo = LearningDocumentRepository(session)
     item = await repo.create(
@@ -971,13 +989,13 @@ async def update_learning_document(
 ):
     repo = LearningDocumentRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Учебный документ не найден",
         )
-    
+
     # Если загружен новый файл, удаляем старый и сохраняем новый
     file_url = None
     if file:
@@ -988,14 +1006,14 @@ async def update_learning_document(
             upload_file=file,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о документе
     item = await repo.update(
         obj_id=item_id,
         title=title,
         file_url=file_url,
     )
-    
+
     return item
 
 
@@ -1007,16 +1025,16 @@ async def delete_learning_document(
 ):
     repo = LearningDocumentRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Учебный документ не найден",
         )
-    
+
     # Удаляем файл
     await file_service.delete_file(current_item.file_url)
-    
+
     # Удаляем запись о документе
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -1072,7 +1090,7 @@ async def create_learning_event(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = LearningEventRepository(session)
     item = await repo.create(
         title=title,
@@ -1099,13 +1117,13 @@ async def update_learning_event(
 ):
     repo = LearningEventRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Учебное мероприятие не найдено",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -1117,7 +1135,7 @@ async def update_learning_event(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о мероприятии
     item = await repo.update(
         obj_id=item_id,
@@ -1128,7 +1146,7 @@ async def update_learning_event(
         image_url=image_url,
         is_active=is_active,
     )
-    
+
     return item
 
 
@@ -1140,17 +1158,17 @@ async def delete_learning_event(
 ):
     repo = LearningEventRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Учебное мероприятие не найдено",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись о мероприятии
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -1172,7 +1190,9 @@ async def get_learning_applications(
     return items
 
 
-@router.get("/learning/applications/{item_id}/", response_model=LearningApplicationResponse)
+@router.get(
+    "/learning/applications/{item_id}/", response_model=LearningApplicationResponse
+)
 async def get_learning_application_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -1192,9 +1212,9 @@ async def get_learning_application_by_id(
 async def create_learning_application(
     application_type: Annotated[str, Form()],  # "Платное", "Бесплатное" или "Другое"
     full_name: Annotated[str, Form()],
-    phone: Annotated[str | None, Form()] = None,
     email: Annotated[str, Form()],
     text: Annotated[str, Form()],
+    phone: Annotated[str | None, Form()] = None,
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),
 ):
@@ -1209,10 +1229,14 @@ async def create_learning_application(
     return item
 
 
-@router.put("/learning/applications/{item_id}/", response_model=LearningApplicationResponse)
+@router.put(
+    "/learning/applications/{item_id}/", response_model=LearningApplicationResponse
+)
 async def update_learning_application(
     item_id: uuid.UUID,
-    application_type: Annotated[str | None, Form()] = None,  # "Платное", "Бесплатное" или "Другое"
+    application_type: Annotated[
+        str | None, Form()
+    ] = None,  # "Платное", "Бесплатное" или "Другое"
     full_name: Annotated[str | None, Form()] = None,
     phone: Annotated[str | None, Form()] = None,
     email: Annotated[str | None, Form()] = None,
@@ -1229,17 +1253,19 @@ async def update_learning_application(
         email=email,
         text=text,
     )
-    
+
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Учебная заявка не найдена",
         )
-    
+
     return item
 
 
-@router.delete("/learning/applications/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/learning/applications/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_learning_application(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -1298,7 +1324,7 @@ async def create_learning_news(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = LearningNewsRepository(session)
     item = await repo.create(
         title=title,
@@ -1321,13 +1347,13 @@ async def update_learning_news(
 ):
     repo = LearningNewsRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Учебная новость не найдена",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -1339,7 +1365,7 @@ async def update_learning_news(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о новости
     item = await repo.update(
         obj_id=item_id,
@@ -1348,7 +1374,7 @@ async def update_learning_news(
         description=description,
         image_url=image_url,
     )
-    
+
     return item
 
 
@@ -1360,17 +1386,17 @@ async def delete_learning_news(
 ):
     repo = LearningNewsRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Учебная новость не найдена",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись о новости
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -1425,7 +1451,9 @@ async def create_learning_question(
         message=message,
         phone=phone,
         response=response,
-        is_answered=bool(response),  # Автоматически устанавливаем флаг ответа, если есть ответ
+        is_answered=bool(
+            response
+        ),  # Автоматически устанавливаем флаг ответа, если есть ответ
     )
     return item
 
@@ -1443,11 +1471,11 @@ async def update_learning_question(
     user: User = Depends(get_current_active_user),
 ):
     repo = LearningQuestionRepository(session)
-    
+
     # Если есть ответ, автоматически устанавливаем флаг ответа
     if response is not None:
         is_answered = True
-    
+
     item = await repo.update(
         obj_id=item_id,
         name=name,
@@ -1457,13 +1485,13 @@ async def update_learning_question(
         response=response,
         is_answered=is_answered,
     )
-    
+
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Учебный вопрос не найден",
         )
-    
+
     return item
 
 
@@ -1527,7 +1555,7 @@ async def create_learning_contact(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = LearningContactRepository(session)
     item = await repo.create(
         full_name=full_name,
@@ -1552,13 +1580,13 @@ async def update_learning_contact(
 ):
     repo = LearningContactRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Учебный контакт не найден",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -1570,7 +1598,7 @@ async def update_learning_contact(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о контакте
     item = await repo.update(
         obj_id=item_id,
@@ -1580,7 +1608,7 @@ async def update_learning_contact(
         phone=phone,
         image_url=image_url,
     )
-    
+
     return item
 
 
@@ -1592,17 +1620,17 @@ async def delete_learning_contact(
 ):
     repo = LearningContactRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Учебный контакт не найден",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись о контакте
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -1614,7 +1642,10 @@ async def delete_learning_contact(
 
 
 # Online Conference Regulations
-@router.get("/online-conference/regulations/", response_model=list[OnlineConferenceRegulationResponse])
+@router.get(
+    "/online-conference/regulations/",
+    response_model=list[OnlineConferenceRegulationResponse],
+)
 async def get_online_conference_regulations(
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),
@@ -1624,7 +1655,10 @@ async def get_online_conference_regulations(
     return items
 
 
-@router.get("/online-conference/regulations/{item_id}/", response_model=OnlineConferenceRegulationResponse)
+@router.get(
+    "/online-conference/regulations/{item_id}/",
+    response_model=OnlineConferenceRegulationResponse,
+)
 async def get_online_conference_regulation_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -1640,7 +1674,9 @@ async def get_online_conference_regulation_by_id(
     return item
 
 
-@router.post("/online-conference/regulations/", response_model=OnlineConferenceRegulationResponse)
+@router.post(
+    "/online-conference/regulations/", response_model=OnlineConferenceRegulationResponse
+)
 async def create_online_conference_regulation(
     title: Annotated[str, Form()],
     file: UploadFile,  # Файл документа
@@ -1652,7 +1688,7 @@ async def create_online_conference_regulation(
         upload_file=file,
         subdirectory=DOCUMENTS_FOLDER,
     )
-    
+
     # Создаем запись о регламенте
     repo = OnlineConferenceRegulationRepository(session)
     item = await repo.create(
@@ -1662,7 +1698,10 @@ async def create_online_conference_regulation(
     return item
 
 
-@router.put("/online-conference/regulations/{item_id}/", response_model=OnlineConferenceRegulationResponse)
+@router.put(
+    "/online-conference/regulations/{item_id}/",
+    response_model=OnlineConferenceRegulationResponse,
+)
 async def update_online_conference_regulation(
     item_id: uuid.UUID,
     title: Annotated[str | None, Form()] = None,
@@ -1672,13 +1711,13 @@ async def update_online_conference_regulation(
 ):
     repo = OnlineConferenceRegulationRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Регламент онлайн-конференции не найден",
         )
-    
+
     # Если загружен новый файл, удаляем старый и сохраняем новый
     file_url = None
     if file:
@@ -1689,18 +1728,20 @@ async def update_online_conference_regulation(
             upload_file=file,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о регламенте
     item = await repo.update(
         obj_id=item_id,
         title=title,
         file_url=file_url,
     )
-    
+
     return item
 
 
-@router.delete("/online-conference/regulations/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/online-conference/regulations/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_online_conference_regulation(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -1708,16 +1749,16 @@ async def delete_online_conference_regulation(
 ):
     repo = OnlineConferenceRegulationRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Регламент онлайн-конференции не найден",
         )
-    
+
     # Удаляем файл
     await file_service.delete_file(current_item.file_url)
-    
+
     # Удаляем запись о регламенте
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -1729,7 +1770,10 @@ async def delete_online_conference_regulation(
 
 
 # Online Conference Participants
-@router.get("/online-conference/participants/", response_model=list[OnlineConferenceParticipantResponse])
+@router.get(
+    "/online-conference/participants/",
+    response_model=list[OnlineConferenceParticipantResponse],
+)
 async def get_online_conference_participants(
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),
@@ -1739,7 +1783,10 @@ async def get_online_conference_participants(
     return items
 
 
-@router.get("/online-conference/participants/{item_id}/", response_model=OnlineConferenceParticipantResponse)
+@router.get(
+    "/online-conference/participants/{item_id}/",
+    response_model=OnlineConferenceParticipantResponse,
+)
 async def get_online_conference_participant_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -1755,7 +1802,10 @@ async def get_online_conference_participant_by_id(
     return item
 
 
-@router.post("/online-conference/participants/", response_model=OnlineConferenceParticipantResponse)
+@router.post(
+    "/online-conference/participants/",
+    response_model=OnlineConferenceParticipantResponse,
+)
 async def create_online_conference_participant(
     first_name: Annotated[str, Form()],
     last_name: Annotated[str, Form()],
@@ -1770,7 +1820,7 @@ async def create_online_conference_participant(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = OnlineConferenceParticipantRepository(session)
     item = await repo.create(
         first_name=first_name,
@@ -1780,7 +1830,10 @@ async def create_online_conference_participant(
     return item
 
 
-@router.put("/online-conference/participants/{item_id}/", response_model=OnlineConferenceParticipantResponse)
+@router.put(
+    "/online-conference/participants/{item_id}/",
+    response_model=OnlineConferenceParticipantResponse,
+)
 async def update_online_conference_participant(
     item_id: uuid.UUID,
     first_name: Annotated[str | None, Form()] = None,
@@ -1791,13 +1844,13 @@ async def update_online_conference_participant(
 ):
     repo = OnlineConferenceParticipantRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Участник онлайн-конференции не найден",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -1809,7 +1862,7 @@ async def update_online_conference_participant(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию об участнике
     item = await repo.update(
         obj_id=item_id,
@@ -1817,11 +1870,13 @@ async def update_online_conference_participant(
         last_name=last_name,
         image_url=image_url,
     )
-    
+
     return item
 
 
-@router.delete("/online-conference/participants/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/online-conference/participants/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_online_conference_participant(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -1829,17 +1884,17 @@ async def delete_online_conference_participant(
 ):
     repo = OnlineConferenceParticipantRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Участник онлайн-конференции не найден",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись об участнике
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -1851,7 +1906,9 @@ async def delete_online_conference_participant(
 
 
 # Online Conference News
-@router.get("/online-conference/news/", response_model=list[OnlineConferenceNewsResponse])
+@router.get(
+    "/online-conference/news/", response_model=list[OnlineConferenceNewsResponse]
+)
 async def get_online_conference_news(
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),
@@ -1861,7 +1918,9 @@ async def get_online_conference_news(
     return items
 
 
-@router.get("/online-conference/news/{item_id}/", response_model=OnlineConferenceNewsResponse)
+@router.get(
+    "/online-conference/news/{item_id}/", response_model=OnlineConferenceNewsResponse
+)
 async def get_online_conference_news_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -1893,7 +1952,7 @@ async def create_online_conference_news(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = OnlineConferenceNewsRepository(session)
     item = await repo.create(
         title=title,
@@ -1904,7 +1963,9 @@ async def create_online_conference_news(
     return item
 
 
-@router.put("/online-conference/news/{item_id}/", response_model=OnlineConferenceNewsResponse)
+@router.put(
+    "/online-conference/news/{item_id}/", response_model=OnlineConferenceNewsResponse
+)
 async def update_online_conference_news(
     item_id: uuid.UUID,
     title: Annotated[str | None, Form()] = None,
@@ -1916,13 +1977,13 @@ async def update_online_conference_news(
 ):
     repo = OnlineConferenceNewsRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Новость онлайн-конференции не найдена",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -1934,7 +1995,7 @@ async def update_online_conference_news(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о новости
     item = await repo.update(
         obj_id=item_id,
@@ -1943,11 +2004,13 @@ async def update_online_conference_news(
         description=description,
         image_url=image_url,
     )
-    
+
     return item
 
 
-@router.delete("/online-conference/news/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/online-conference/news/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_online_conference_news(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -1955,17 +2018,17 @@ async def delete_online_conference_news(
 ):
     repo = OnlineConferenceNewsRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Новость онлайн-конференции не найдена",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись о новости
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -1977,7 +2040,10 @@ async def delete_online_conference_news(
 
 
 # Online Conference Questions
-@router.get("/online-conference/questions/", response_model=list[OnlineConferenceQuestionResponse])
+@router.get(
+    "/online-conference/questions/",
+    response_model=list[OnlineConferenceQuestionResponse],
+)
 async def get_online_conference_questions(
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),
@@ -1987,7 +2053,10 @@ async def get_online_conference_questions(
     return items
 
 
-@router.get("/online-conference/questions/{item_id}/", response_model=OnlineConferenceQuestionResponse)
+@router.get(
+    "/online-conference/questions/{item_id}/",
+    response_model=OnlineConferenceQuestionResponse,
+)
 async def get_online_conference_question_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -2003,7 +2072,9 @@ async def get_online_conference_question_by_id(
     return item
 
 
-@router.post("/online-conference/questions/", response_model=OnlineConferenceQuestionResponse)
+@router.post(
+    "/online-conference/questions/", response_model=OnlineConferenceQuestionResponse
+)
 async def create_online_conference_question(
     name: Annotated[str, Form()],
     email: Annotated[str, Form()],
@@ -2020,12 +2091,17 @@ async def create_online_conference_question(
         message=message,
         phone=phone,
         response=response,
-        is_answered=bool(response),  # Автоматически устанавливаем флаг ответа, если есть ответ
+        is_answered=bool(
+            response
+        ),  # Автоматически устанавливаем флаг ответа, если есть ответ
     )
     return item
 
 
-@router.put("/online-conference/questions/{item_id}/", response_model=OnlineConferenceQuestionResponse)
+@router.put(
+    "/online-conference/questions/{item_id}/",
+    response_model=OnlineConferenceQuestionResponse,
+)
 async def update_online_conference_question(
     item_id: uuid.UUID,
     name: Annotated[str | None, Form()] = None,
@@ -2038,11 +2114,11 @@ async def update_online_conference_question(
     user: User = Depends(get_current_active_user),
 ):
     repo = OnlineConferenceQuestionRepository(session)
-    
+
     # Если есть ответ, автоматически устанавливаем флаг ответа
     if response is not None:
         is_answered = True
-    
+
     item = await repo.update(
         obj_id=item_id,
         name=name,
@@ -2052,17 +2128,19 @@ async def update_online_conference_question(
         response=response,
         is_answered=is_answered,
     )
-    
+
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Вопрос онлайн-конференции не найден",
         )
-    
+
     return item
 
 
-@router.delete("/online-conference/questions/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/online-conference/questions/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_online_conference_question(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -2079,7 +2157,9 @@ async def delete_online_conference_question(
 
 
 # Online Conference Contacts
-@router.get("/online-conference/contacts/", response_model=list[OnlineConferenceContactResponse])
+@router.get(
+    "/online-conference/contacts/", response_model=list[OnlineConferenceContactResponse]
+)
 async def get_online_conference_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),
@@ -2089,7 +2169,10 @@ async def get_online_conference_contacts(
     return items
 
 
-@router.get("/online-conference/contacts/{item_id}/", response_model=OnlineConferenceContactResponse)
+@router.get(
+    "/online-conference/contacts/{item_id}/",
+    response_model=OnlineConferenceContactResponse,
+)
 async def get_online_conference_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -2105,7 +2188,9 @@ async def get_online_conference_contact_by_id(
     return item
 
 
-@router.post("/online-conference/contacts/", response_model=OnlineConferenceContactResponse)
+@router.post(
+    "/online-conference/contacts/", response_model=OnlineConferenceContactResponse
+)
 async def create_online_conference_contact(
     full_name: Annotated[str, Form()],
     description: Annotated[str, Form()],
@@ -2122,7 +2207,7 @@ async def create_online_conference_contact(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = OnlineConferenceContactRepository(session)
     item = await repo.create(
         full_name=full_name,
@@ -2134,7 +2219,10 @@ async def create_online_conference_contact(
     return item
 
 
-@router.put("/online-conference/contacts/{item_id}/", response_model=OnlineConferenceContactResponse)
+@router.put(
+    "/online-conference/contacts/{item_id}/",
+    response_model=OnlineConferenceContactResponse,
+)
 async def update_online_conference_contact(
     item_id: uuid.UUID,
     full_name: Annotated[str | None, Form()] = None,
@@ -2147,13 +2235,13 @@ async def update_online_conference_contact(
 ):
     repo = OnlineConferenceContactRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Контакт онлайн-конференции не найден",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -2165,7 +2253,7 @@ async def update_online_conference_contact(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о контакте
     item = await repo.update(
         obj_id=item_id,
@@ -2175,11 +2263,13 @@ async def update_online_conference_contact(
         phone=phone,
         image_url=image_url,
     )
-    
+
     return item
 
 
-@router.delete("/online-conference/contacts/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/online-conference/contacts/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_online_conference_contact(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -2187,17 +2277,17 @@ async def delete_online_conference_contact(
 ):
     repo = OnlineConferenceContactRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Контакт онлайн-конференции не найден",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись о контакте
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -2219,7 +2309,9 @@ async def get_podcast_applications(
     return items
 
 
-@router.get("/podcast/applications/{item_id}/", response_model=PodcastApplicationResponse)
+@router.get(
+    "/podcast/applications/{item_id}/", response_model=PodcastApplicationResponse
+)
 async def get_podcast_application_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -2237,11 +2329,13 @@ async def get_podcast_application_by_id(
 
 @router.post("/podcast/applications/", response_model=PodcastApplicationResponse)
 async def create_podcast_application(
-    application_type: Annotated[str, Form()],  # "Образовательный", "Разговорный" или "Другое"
+    application_type: Annotated[
+        str, Form()
+    ],  # "Образовательный", "Разговорный" или "Другое"
     full_name: Annotated[str, Form()],
-    phone: Annotated[str | None, Form()] = None,
     email: Annotated[str, Form()],
     text: Annotated[str, Form()],
+    phone: Annotated[str | None, Form()] = None,
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),
 ):
@@ -2256,10 +2350,14 @@ async def create_podcast_application(
     return item
 
 
-@router.put("/podcast/applications/{item_id}/", response_model=PodcastApplicationResponse)
+@router.put(
+    "/podcast/applications/{item_id}/", response_model=PodcastApplicationResponse
+)
 async def update_podcast_application(
     item_id: uuid.UUID,
-    application_type: Annotated[str | None, Form()] = None,  # "Образовательный", "Разговорный" или "Другое"
+    application_type: Annotated[
+        str | None, Form()
+    ] = None,  # "Образовательный", "Разговорный" или "Другое"
     full_name: Annotated[str | None, Form()] = None,
     phone: Annotated[str | None, Form()] = None,
     email: Annotated[str | None, Form()] = None,
@@ -2276,17 +2374,19 @@ async def update_podcast_application(
         email=email,
         text=text,
     )
-    
+
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Заявка на подкаст не найдена",
         )
-    
+
     return item
 
 
-@router.delete("/podcast/applications/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/podcast/applications/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_podcast_application(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -2313,7 +2413,9 @@ async def get_podcast_participants(
     return items
 
 
-@router.get("/podcast/participants/{item_id}/", response_model=PodcastParticipantResponse)
+@router.get(
+    "/podcast/participants/{item_id}/", response_model=PodcastParticipantResponse
+)
 async def get_podcast_participant_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -2344,7 +2446,9 @@ async def create_podcast_participant(
     return item
 
 
-@router.put("/podcast/participants/{item_id}/", response_model=PodcastParticipantResponse)
+@router.put(
+    "/podcast/participants/{item_id}/", response_model=PodcastParticipantResponse
+)
 async def update_podcast_participant(
     item_id: uuid.UUID,
     video_url: Annotated[str | None, Form()] = None,
@@ -2358,17 +2462,19 @@ async def update_podcast_participant(
         video_url=video_url,
         guests=guests,
     )
-    
+
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Участник подкаста не найден",
         )
-    
+
     return item
 
 
-@router.delete("/podcast/participants/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/podcast/participants/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_podcast_participant(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -2427,7 +2533,7 @@ async def create_podcast_news(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = PodcastNewsRepository(session)
     item = await repo.create(
         title=title,
@@ -2450,13 +2556,13 @@ async def update_podcast_news(
 ):
     repo = PodcastNewsRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Новость подкаста не найдена",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -2468,7 +2574,7 @@ async def update_podcast_news(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о новости
     item = await repo.update(
         obj_id=item_id,
@@ -2477,7 +2583,7 @@ async def update_podcast_news(
         description=description,
         image_url=image_url,
     )
-    
+
     return item
 
 
@@ -2489,17 +2595,17 @@ async def delete_podcast_news(
 ):
     repo = PodcastNewsRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Новость подкаста не найдена",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись о новости
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -2554,7 +2660,7 @@ async def create_podcast_contact(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = PodcastContactRepository(session)
     item = await repo.create(
         full_name=full_name,
@@ -2579,13 +2685,13 @@ async def update_podcast_contact(
 ):
     repo = PodcastContactRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Контакт подкаста не найден",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -2597,7 +2703,7 @@ async def update_podcast_contact(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о контакте
     item = await repo.update(
         obj_id=item_id,
@@ -2607,7 +2713,7 @@ async def update_podcast_contact(
         phone=phone,
         image_url=image_url,
     )
-    
+
     return item
 
 
@@ -2619,17 +2725,17 @@ async def delete_podcast_contact(
 ):
     repo = PodcastContactRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Контакт подкаста не найден",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись о контакте
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -2683,7 +2789,7 @@ async def create_project_news(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = ProjectNewsRepository(session)
     item = await repo.create(
         title=title,
@@ -2706,13 +2812,13 @@ async def update_project_news(
 ):
     repo = ProjectNewsRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Новость проекта не найдена",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -2724,7 +2830,7 @@ async def update_project_news(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о новости
     item = await repo.update(
         obj_id=item_id,
@@ -2733,7 +2839,7 @@ async def update_project_news(
         description=description,
         image_url=image_url,
     )
-    
+
     return item
 
 
@@ -2745,17 +2851,17 @@ async def delete_project_news(
 ):
     repo = ProjectNewsRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Новость проекта не найдена",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись о новости
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -2822,13 +2928,13 @@ async def update_project_report(
         organization_name=organization_name,
         video_url=video_url,
     )
-    
+
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Отчет проекта не найден",
         )
-    
+
     return item
 
 
@@ -2859,7 +2965,9 @@ async def get_competition_documents(
     return items
 
 
-@router.get("/competition/documents/{item_id}/", response_model=CompetitionDocumentResponse)
+@router.get(
+    "/competition/documents/{item_id}/", response_model=CompetitionDocumentResponse
+)
 async def get_competition_document_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -2887,7 +2995,7 @@ async def create_competition_document(
         upload_file=file,
         subdirectory=DOCUMENTS_FOLDER,
     )
-    
+
     # Создаем запись о документе
     repo = CompetitionDocumentRepository(session)
     item = await repo.create(
@@ -2897,7 +3005,9 @@ async def create_competition_document(
     return item
 
 
-@router.put("/competition/documents/{item_id}/", response_model=CompetitionDocumentResponse)
+@router.put(
+    "/competition/documents/{item_id}/", response_model=CompetitionDocumentResponse
+)
 async def update_competition_document(
     item_id: uuid.UUID,
     title: Annotated[str | None, Form()] = None,
@@ -2907,13 +3017,13 @@ async def update_competition_document(
 ):
     repo = CompetitionDocumentRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Документ конкурса не найден",
         )
-    
+
     # Если загружен новый файл, удаляем старый и сохраняем новый
     file_url = None
     if file:
@@ -2924,18 +3034,20 @@ async def update_competition_document(
             upload_file=file,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о документе
     item = await repo.update(
         obj_id=item_id,
         title=title,
         file_url=file_url,
     )
-    
+
     return item
 
 
-@router.delete("/competition/documents/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/competition/documents/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_competition_document(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -2943,16 +3055,16 @@ async def delete_competition_document(
 ):
     repo = CompetitionDocumentRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Документ конкурса не найден",
         )
-    
+
     # Удаляем файл
     await file_service.delete_file(current_item.file_url)
-    
+
     # Удаляем запись о документе
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -2974,7 +3086,9 @@ async def get_competition_contacts(
     return items
 
 
-@router.get("/competition/contacts/{item_id}/", response_model=CompetitionContactResponse)
+@router.get(
+    "/competition/contacts/{item_id}/", response_model=CompetitionContactResponse
+)
 async def get_competition_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -3007,7 +3121,9 @@ async def create_competition_contact(
     return item
 
 
-@router.put("/competition/contacts/{item_id}/", response_model=CompetitionContactResponse)
+@router.put(
+    "/competition/contacts/{item_id}/", response_model=CompetitionContactResponse
+)
 async def update_competition_contact(
     item_id: uuid.UUID,
     organization_name: Annotated[str | None, Form()] = None,
@@ -3023,17 +3139,19 @@ async def update_competition_contact(
         phone=phone,
         email=email,
     )
-    
+
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Контакт конкурса не найден",
         )
-    
+
     return item
 
 
-@router.delete("/competition/contacts/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/competition/contacts/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_competition_contact(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -3092,7 +3210,7 @@ async def create_journal_news(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
-    
+
     repo = JournalNewsRepository(session)
     item = await repo.create(
         title=title,
@@ -3115,13 +3233,13 @@ async def update_journal_news(
 ):
     repo = JournalNewsRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Новость журнала не найдена",
         )
-    
+
     # Если загружено новое изображение, удаляем старое и сохраняем новое
     image_url = None
     if image:
@@ -3133,7 +3251,7 @@ async def update_journal_news(
             upload_file=image,
             subdirectory=DOCUMENTS_FOLDER,
         )
-    
+
     # Обновляем информацию о новости
     item = await repo.update(
         obj_id=item_id,
@@ -3142,7 +3260,7 @@ async def update_journal_news(
         description=description,
         image_url=image_url,
     )
-    
+
     return item
 
 
@@ -3154,17 +3272,17 @@ async def delete_journal_news(
 ):
     repo = JournalNewsRepository(session)
     current_item = await repo.get_by_id(item_id)
-    
+
     if not current_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Новость журнала не найдена",
         )
-    
+
     # Удаляем изображение
     if current_item.image_url:
         await file_service.delete_file(current_item.image_url)
-    
+
     # Удаляем запись о новости
     deleted = await repo.delete(item_id)
     if not deleted:
@@ -3235,13 +3353,13 @@ async def update_journal_contact(
         email=email,
         address=address,
     )
-    
+
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Контакт журнала не найден",
         )
-    
+
     return item
 
 

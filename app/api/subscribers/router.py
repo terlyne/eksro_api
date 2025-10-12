@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.file.service import file_service, SUBSCRIBERS_IMAGES_FOLDER
+from core.file.service import file_service
 from core.models import User
 from core.db_helper import db_helper
 from api.dependencies import get_current_active_user

@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.file.service import file_service, FEEDBACKS_IMAGES_FOLDER
 from core.models import User
 from core.db_helper import db_helper
-from api.dependencies import get_current_active_user
+from api.dependencies import get_current_active_user, verify_active_param_access
 from api.feedbacks.repository import FeedbackRepository
 from api.feedbacks.schemas import (
     FeedbackCreate,

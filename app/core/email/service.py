@@ -124,3 +124,7 @@ class EmailService:
         )
 
         await cls.fast_mail.send_message(message)
+
+
+# Создаем экземпляр сервиса
+email_service = EmailService()

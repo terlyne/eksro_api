@@ -7,6 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import Subscriber
 from api.subscribers.schemas import SubscriberCreate
 from api.news.repository import get_news_type_by_id
+from repository.base import BaseRepository
+
+
+class SubscriberRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(session=session, model=Subscriber)
 
 
 async def get_subscribers(

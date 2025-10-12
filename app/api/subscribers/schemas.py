@@ -20,6 +20,12 @@ class SubscriberCreate(SubscriberBase):
     is_confirmed: bool | None = None
 
 
+class SubscriberUpdate(BaseModel):
+    email: Annotated[EmailStr, Field(max_length=320)] | None = None
+    is_confirmed: bool | None = None
+    type_id: uuid.UUID | None = None
+
+
 class NewsLetter(BaseModel):
     title: str
     text: str

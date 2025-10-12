@@ -48,3 +48,7 @@ class NewsTypeResponse(NewsTypeBase):
 
 class NewsTypeCreate(NewsTypeBase):
     pass
+
+
+class NewsTypeUpdate(NewsTypeBase):
+    pass

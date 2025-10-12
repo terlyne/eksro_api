@@ -3,6 +3,32 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import News
+from repository.base import BaseRepository
+
+
+class SearchRepository:
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def search_by_entity_type(
+        self, query: str, entity_type: str, skip: int, limit: int
+    ):
+        # Для упрощения возвращаем пустой список, т.к. в проекте нет других сущностей
+        return []
+
+    async def search_all(self, query: str, skip: int, limit: int):
+        # Используем существующую функцию для поиска новостей
+        return await search_news(self.session, query, limit, skip)
+
+    async def get_suggestions_by_entity_type(
+        self, query: str, entity_type: str, limit: int
+    ):
+        # Для упрощения возвращаем пустой список
+        return []
+
+    async def get_all_suggestions(self, query: str, limit: int):
+        # Используем существующую функцию для получения подсказок
+        return await get_suggestions(self.session, query, limit)
 
 
 async def get_suggestions(

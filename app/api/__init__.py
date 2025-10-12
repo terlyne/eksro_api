@@ -28,45 +28,62 @@ from api.search.router import router as search_router
 
 router = APIRouter()
 
-# Подключаем маршруты
-router.include_router(
-    about_organization_router, prefix="/about-organization", tags=["about-organization"]
-)
-router.include_router(
+about_organization_router.include_router(
     delivered_opportunities_router,
     prefix="/delivered-opportunities",
-    tags=["delivered-opportunities"],
+)
+about_organization_router.include_router(
+    managers_router,
+    prefix="/managers",
+)
+about_organization_router.include_router(
+    documents_router,
+    prefix="/documents",
+)
+# Подключаем маршруты
+router.include_router(
+    about_organization_router, prefix="/about-organization", tags=["Об организации"]
+)
+
+router.include_router(
+    parent_section_router, prefix="/parent-section", tags=["Родителям"]
+)
+soviet_section_router.include_router(
+    application_form_router,
+    prefix="/application-form",
 )
 router.include_router(
-    parent_section_router, prefix="/parent-section", tags=["parent-section"]
-)
-router.include_router(
-    soviet_section_router, prefix="/soviet-section", tags=["soviet-section"]
+    soviet_section_router, prefix="/soviet-section", tags=["Управляющим советам"]
 )
 router.include_router(
     organization_section_router,
     prefix="/organization-section",
-    tags=["organization-section"],
+    tags=["Образовательным организациям"],
+)
+
+router.include_router(partners_router, prefix="/partners", tags=["Партнеры"])
+
+
+router.include_router(
+    projects_router, prefix="/projects", tags=["Проекты (Главная страница)"]
 )
 router.include_router(
-    application_form_router, prefix="/application-form", tags=["application-form"]
+    banners_router, prefix="/banners", tags=["Баннеры (Главная страница)"]
 )
-router.include_router(projects_router, prefix="/projects", tags=["projects"])
-router.include_router(banners_router, prefix="/banners", tags=["banners"])
-router.include_router(news_router, prefix="/news", tags=["news"])
-router.include_router(feedbacks_router, prefix="/feedbacks", tags=["feedbacks"])
-router.include_router(polls_router, prefix="/polls", tags=["polls"])
-router.include_router(partners_router, prefix="/partners", tags=["partners"])
-router.include_router(managers_router, prefix="/managers", tags=["managers"])
+router.include_router(news_router, prefix="/news", tags=["Новости (Главная страница)"])
 router.include_router(
-    participants_router, prefix="/participants", tags=["participants"]
+    feedbacks_router, prefix="/feedbacks", tags=["Вопросы (Главная страница)"]
 )
-router.include_router(documents_router, prefix="/documents", tags=["documents"])
-router.include_router(events_router, prefix="/events", tags=["events"])
-router.include_router(site_images_router, prefix="/site-images", tags=["site-images"])
-router.include_router(contacts_router, prefix="/contacts", tags=["contacts"])
+router.include_router(polls_router, prefix="/polls", tags=["Опросы (Главная страница)"])
+
+router.include_router(
+    contacts_router, prefix="/contacts", tags=["Контакты (Главная страница)"]
+)
 router.include_router(auth_router, prefix="/auth", tags=["auth"])
 router.include_router(users_router, prefix="/users", tags=["users"])
+
+
+router.include_router(site_images_router, prefix="/site-images", tags=["site-images"])
 router.include_router(subscribers_router, prefix="/subscribers", tags=["subscribers"])
 router.include_router(
     email_templates_router, prefix="/email-templates", tags=["email-templates"]

@@ -13,10 +13,12 @@ BANNERS_IMAGES_FOLDER = "images/banners"
 EVENTS_IMAGES_FOLDER = "images/events"
 NEWS_IMAGES_FOLDER = "images/news"
 PARTNERS_IMAGES_FOLDER = "images/partners"
+PARTNERS_LOGOS_FOLDER = "images/partners/logos"
 PROJECTS_IMAGES_FOLDER = "images/projects"
 SITE_IMAGES_FOLDER = "images/site"
 MANAGERS_IMAGES_FOLDER = "images/managers"
 PARTICIPANTS_IMAGES_FOLDER = "images/participants"
+FEEDBACKS_IMAGES_FOLDER = "images/feedbacks"
 
 # Папки для документов
 DOCUMENTS_FOLDER = "documents"
