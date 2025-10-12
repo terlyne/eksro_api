@@ -45,8 +45,7 @@ async def get_manager_by_id(
 
 @router.post("/", response_model=ManagerResponse)
 async def create_manager(
-    first_name: Annotated[str, Form()],
-    last_name: Annotated[str, Form()],
+    full_name: Annotated[str, Form()],
     position: Annotated[str, Form()],
     phone: Annotated[str | None, Form()] = None,
     email: Annotated[str | None, Form()] = None,
@@ -65,8 +64,7 @@ async def create_manager(
     # Создаем запись о руководителе
     manager_repo = ManagerRepository(session)
     manager = await manager_repo.create(
-        first_name=first_name,
-        last_name=last_name,
+        full_name=full_name,
         position=position,
         phone=phone,
         email=email,
@@ -78,8 +76,7 @@ async def create_manager(
 @router.put("/{manager_id}/", response_model=ManagerResponse)
 async def update_manager(
     manager_id: uuid.UUID,
-    first_name: Annotated[str | None, Form()] = None,
-    last_name: Annotated[str | None, Form()] = None,
+    full_name: Annotated[str | None, Form()] = None,
     position: Annotated[str | None, Form()] = None,
     phone: Annotated[str | None, Form()] = None,
     email: Annotated[str | None, Form()] = None,
@@ -111,8 +108,7 @@ async def update_manager(
     # Обновляем информацию о руководителе
     manager = await manager_repo.update(
         obj_id=manager_id,
-        first_name=first_name,
-        last_name=last_name,
+        full_name=full_name,
         position=position,
         phone=phone,
         email=email,
