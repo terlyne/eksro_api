@@ -22,7 +22,6 @@ router = APIRouter()
 @router.get("/", response_model=list[AboutOrganizationResponse])
 async def get_about_organizations(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     about_org_repo = AboutOrganizationRepository(session)
     about_organizations = await about_org_repo.get_all()
@@ -33,7 +32,6 @@ async def get_about_organizations(
 async def get_about_organization_by_id(
     about_organization_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     about_org_repo = AboutOrganizationRepository(session)
     about_organization = await about_org_repo.get_by_id(about_organization_id)

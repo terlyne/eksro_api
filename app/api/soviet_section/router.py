@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.file.service import file_service, DOCUMENTS_FOLDER
 from core.models import User
 from core.db_helper import db_helper
-from api.dependencies import get_current_active_user
+from api.dependencies import get_current_active_user, verify_active_param_access
 from api.soviet_section.repository import (
     SovietSupportDocumentRepository,
     SovietSupportEventRepository,
@@ -133,7 +133,6 @@ router = APIRouter()
 @router.get("/support-documents/", response_model=list[SovietSupportDocumentResponse])
 async def get_soviet_support_documents(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = SovietSupportDocumentRepository(session)
     items = await repo.get_all()
@@ -146,7 +145,6 @@ async def get_soviet_support_documents(
 async def get_soviet_support_document_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = SovietSupportDocumentRepository(session)
     item = await repo.get_by_id(item_id)
@@ -252,10 +250,10 @@ async def delete_soviet_support_document(
 @router.get("/support-events/", response_model=list[SovietSupportEventResponse])
 async def get_soviet_support_events(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     repo = SovietSupportEventRepository(session)
-    items = await repo.get_all()
+    items = await repo.find_all(is_active=is_active)
     return items
 
 
@@ -263,10 +261,10 @@ async def get_soviet_support_events(
 async def get_soviet_support_event_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     repo = SovietSupportEventRepository(session)
-    item = await repo.get_by_id(item_id)
+    item = await repo.find_one(id=item_id, is_active=is_active)
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -423,7 +421,6 @@ async def create_soviet_support_application(
     email: Annotated[str, Form()],
     text: Annotated[str, Form()],
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = SovietSupportApplicationRepository(session)
     item = await repo.create(

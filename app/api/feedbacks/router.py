@@ -22,18 +22,13 @@ router = APIRouter()
 
 @router.get("/", response_model=list[FeedbackResponse])
 async def get_feedbacks(
-    is_active: bool = Depends(verify_active_param_access),
     skip: int = 0,
     limit: int = 10,
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),
 ):
     feedback_repo = FeedbackRepository(session)
-    feedbacks = (
-        await feedback_repo.get_all_active()
-        if is_active
-        else await feedback_repo.get_all()
-    )
+    feedbacks = await feedback_repo.get_all()
     return feedbacks[skip : skip + limit]
 
 
@@ -61,7 +56,6 @@ async def create_feedback(
     phone: Annotated[str | None, Form()] = None,
     image: UploadFile | None = None,  # Файл изображения (опционально)
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     # Сохраняем изображение (если загружено)
     image_url = None

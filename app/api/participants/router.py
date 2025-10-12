@@ -22,7 +22,6 @@ router = APIRouter()
 @router.get("/", response_model=list[ParticipantResponse])
 async def get_participants(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     participant_repo = ParticipantRepository(session)
     participants = await participant_repo.get_all()
@@ -33,7 +32,6 @@ async def get_participants(
 async def get_participant_by_id(
     participant_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     participant_repo = ParticipantRepository(session)
     participant = await participant_repo.get_by_id(participant_id)

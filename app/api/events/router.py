@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.file.service import file_service, EVENTS_IMAGES_FOLDER
 from core.models import User
 from core.db_helper import db_helper
-from api.dependencies import get_current_active_user
+from api.dependencies import get_current_active_user, verify_active_param_access
 from api.events.repository import EventRepository
 from api.events.schemas import (
     EventCreate,
@@ -21,22 +21,22 @@ router = APIRouter()
 
 @router.get("/", response_model=list[EventResponse])
 async def get_events(
+    is_active: bool = Depends(verify_active_param_access),
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     event_repo = EventRepository(session)
-    events = await event_repo.get_all()
+    events = await event_repo.find_all(is_active=is_active)
     return events
 
 
 @router.get("/{event_id}/", response_model=EventResponse)
 async def get_event_by_id(
     event_id: uuid.UUID,
+    is_active: bool = Depends(verify_active_param_access),
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     event_repo = EventRepository(session)
-    event = await event_repo.get_by_id(event_id)
+    event = await event_repo.find_one(id=event_id, is_active=is_active)
     if not event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

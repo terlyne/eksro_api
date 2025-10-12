@@ -22,7 +22,6 @@ router = APIRouter()
 @router.get("/", response_model=list[DeliveredOpportunityResponse])
 async def get_delivered_opportunities(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     del_op_repo = DeliveredOpportunityRepository(session)
     delivered_opportunities = await del_op_repo.get_all()
@@ -33,7 +32,6 @@ async def get_delivered_opportunities(
 async def get_delivered_opportunity_by_id(
     delivered_opportunity_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     del_op_repo = DeliveredOpportunityRepository(session)
     delivered_opportunity = await del_op_repo.get_by_id(delivered_opportunity_id)

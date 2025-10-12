@@ -22,7 +22,6 @@ router = APIRouter()
 @router.get("/", response_model=list[ManagerResponse])
 async def get_managers(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     manager_repo = ManagerRepository(session)
     managers = await manager_repo.get_all()
@@ -33,7 +32,6 @@ async def get_managers(
 async def get_manager_by_id(
     manager_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     manager_repo = ManagerRepository(session)
     manager = await manager_repo.get_by_id(manager_id)

@@ -22,7 +22,6 @@ router = APIRouter()
 @router.get("/", response_model=list[ContactResponse])
 async def get_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     contact_repo = ContactRepository(session)
     contacts = await contact_repo.get_all()
@@ -33,7 +32,6 @@ async def get_contacts(
 async def get_contact_by_id(
     contact_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     contact_repo = ContactRepository(session)
     contact = await contact_repo.get_by_id(contact_id)

@@ -23,7 +23,6 @@ async def search_entities(
     skip: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=1, le=100)] = 10,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     """
     Поиск по всем сущностям или по определенному типу сущности
@@ -65,7 +64,6 @@ async def get_search_suggestions(
     ] = None,  # Тип сущности для получения подсказок (опционально)
     limit: Annotated[int, Query(ge=1, le=10)] = 5,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     """
     Получение подсказок для поиска по всем сущностям или по определенному типу сущности

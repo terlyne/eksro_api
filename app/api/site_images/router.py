@@ -22,7 +22,6 @@ router = APIRouter()
 @router.get("/", response_model=list[SiteImageResponse])
 async def get_site_images(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     site_image_repo = SiteImageRepository(session)
     site_images = await site_image_repo.get_all()

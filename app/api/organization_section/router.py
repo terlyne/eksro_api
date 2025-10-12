@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.file.service import file_service, DOCUMENTS_FOLDER
 from core.models import User
 from core.db_helper import db_helper
-from api.dependencies import get_current_active_user
+from api.dependencies import get_current_active_user, verify_active_param_access
 from api.organization_section.repository import (
     OrganizationSupportDocumentRepository,
     OrganizationSupportEventRepository,
@@ -51,7 +51,6 @@ router = APIRouter()
 )
 async def get_support_documents(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OrganizationSupportDocumentRepository(session)
     items = await repo.get_all()
@@ -64,7 +63,6 @@ async def get_support_documents(
 async def get_support_document_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OrganizationSupportDocumentRepository(session)
     item = await repo.get_by_id(item_id)
@@ -170,10 +168,10 @@ async def delete_support_document(
 @router.get("/support/events/", response_model=list[OrganizationSupportEventResponse])
 async def get_support_events(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     repo = OrganizationSupportEventRepository(session)
-    items = await repo.get_all()
+    items = await repo.find_all(is_active=is_active)
     return items
 
 
@@ -183,10 +181,10 @@ async def get_support_events(
 async def get_support_event_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     repo = OrganizationSupportEventRepository(session)
-    item = await repo.get_by_id(item_id)
+    item = await repo.find_one(id=item_id, is_active=is_active)
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -349,7 +347,6 @@ async def create_support_application(
     email: Annotated[str, Form()],
     text: Annotated[str, Form()],
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OrganizationSupportApplicationRepository(session)
     item = await repo.create(
@@ -419,7 +416,6 @@ async def delete_support_application(
 @router.get("/leaders/", response_model=list[OrganizationLeaderResponse])
 async def get_leaders(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OrganizationLeaderRepository(session)
     items = await repo.get_all()
@@ -430,7 +426,6 @@ async def get_leaders(
 async def get_leader_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OrganizationLeaderRepository(session)
     item = await repo.get_by_id(item_id)
@@ -541,7 +536,6 @@ async def delete_leader(
 @router.get("/news/", response_model=list[OrganizationNewsResponse])
 async def get_news(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OrganizationNewsRepository(session)
     items = await repo.get_all()
@@ -552,7 +546,6 @@ async def get_news(
 async def get_news_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OrganizationNewsRepository(session)
     item = await repo.get_by_id(item_id)
@@ -698,7 +691,6 @@ async def create_question(
     phone: Annotated[str | None, Form()] = None,
     response: Annotated[str | None, Form()] = None,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OrganizationQuestionRepository(session)
     item = await repo.create(
@@ -782,7 +774,6 @@ async def get_contacts(
 async def get_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = OrganizationContactRepository(session)
     item = await repo.get_by_id(item_id)

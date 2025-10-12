@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.file.service import file_service, DOCUMENTS_FOLDER
 from core.models import User
 from core.db_helper import db_helper
-from api.dependencies import get_current_active_user
+from api.dependencies import get_current_active_user, verify_active_param_access
 from api.parent_section.repository import (
     ParentDocumentRepository,
     ParentContactRepository,
@@ -69,7 +69,6 @@ router = APIRouter()
 @router.get("/parent-documents", response_model=list[ParentDocumentResponse])
 async def get_parent_documents(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ParentDocumentRepository(session)
     items = await repo.get_all()
@@ -80,7 +79,6 @@ async def get_parent_documents(
 async def get_parent_document_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ParentDocumentRepository(session)
     item = await repo.get_by_id(item_id)
@@ -184,7 +182,6 @@ async def delete_parent_document(
 @router.get("/parent-contacts", response_model=list[ParentContactResponse])
 async def get_parent_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ParentContactRepository(session)
     items = await repo.get_all()
@@ -277,7 +274,6 @@ async def delete_parent_contact(
 )
 async def get_thematic_meeting_participants(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ThematicMeetingParticipantRepository(session)
     items = await repo.get_all()
@@ -291,7 +287,6 @@ async def get_thematic_meeting_participants(
 async def get_thematic_meeting_participant_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ThematicMeetingParticipantRepository(session)
     item = await repo.get_by_id(item_id)
@@ -411,10 +406,10 @@ async def delete_thematic_meeting_participant(
 )
 async def get_thematic_meeting_events(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     repo = ThematicMeetingEventRepository(session)
-    items = await repo.get_all()
+    items = await repo.find_all(is_active=is_active)
     return items
 
 
@@ -424,10 +419,10 @@ async def get_thematic_meeting_events(
 async def get_thematic_meeting_event_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     repo = ThematicMeetingEventRepository(session)
-    item = await repo.get_by_id(item_id)
+    item = await repo.find_one(id=item_id, is_active=is_active)
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -553,7 +548,6 @@ async def delete_thematic_meeting_event(
 )
 async def get_thematic_meeting_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ThematicMeetingContactRepository(session)
     items = await repo.get_all()
@@ -567,7 +561,6 @@ async def get_thematic_meeting_contacts(
 async def get_thematic_meeting_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ThematicMeetingContactRepository(session)
     item = await repo.get_by_id(item_id)
@@ -696,7 +689,6 @@ async def delete_thematic_meeting_contact(
 )
 async def get_etiquette_in_education_documents(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = EtiquetteInEducationDocumentRepository(session)
     items = await repo.get_all()
@@ -710,7 +702,6 @@ async def get_etiquette_in_education_documents(
 async def get_etiquette_in_education_document_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = EtiquetteInEducationDocumentRepository(session)
     item = await repo.get_by_id(item_id)
@@ -825,10 +816,10 @@ async def delete_etiquette_in_education_document(
 )
 async def get_etiquette_in_education_events(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     repo = EtiquetteInEducationEventRepository(session)
-    items = await repo.get_all()
+    items = await repo.find_all(is_active=is_active)
     return items
 
 
@@ -839,10 +830,10 @@ async def get_etiquette_in_education_events(
 async def get_etiquette_in_education_event_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     repo = EtiquetteInEducationEventRepository(session)
-    item = await repo.get_by_id(item_id)
+    item = await repo.find_one(id=item_id, is_active=is_active)
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -972,7 +963,6 @@ async def delete_etiquette_in_education_event(
 )
 async def get_etiquette_in_education_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = EtiquetteInEducationContactRepository(session)
     items = await repo.get_all()
@@ -986,7 +976,6 @@ async def get_etiquette_in_education_contacts(
 async def get_etiquette_in_education_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = EtiquetteInEducationContactRepository(session)
     item = await repo.get_by_id(item_id)
@@ -1116,7 +1105,6 @@ async def delete_etiquette_in_education_contact(
 )
 async def get_professional_learning_trajectory_documents(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ProfessionalLearningTrajectoryDocumentRepository(session)
     items = await repo.get_all()
@@ -1130,7 +1118,6 @@ async def get_professional_learning_trajectory_documents(
 async def get_professional_learning_trajectory_document_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ProfessionalLearningTrajectoryDocumentRepository(session)
     item = await repo.get_by_id(item_id)
@@ -1245,7 +1232,6 @@ async def delete_professional_learning_trajectory_document(
 )
 async def get_professional_learning_trajectory_participants(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ProfessionalLearningTrajectoryParticipantRepository(session)
     items = await repo.get_all()
@@ -1259,7 +1245,6 @@ async def get_professional_learning_trajectory_participants(
 async def get_professional_learning_trajectory_participant_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ProfessionalLearningTrajectoryParticipantRepository(session)
     item = await repo.get_by_id(item_id)
@@ -1382,10 +1367,10 @@ async def delete_professional_learning_trajectory_participant(
 )
 async def get_professional_learning_trajectory_events(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     repo = ProfessionalLearningTrajectoryEventRepository(session)
-    items = await repo.get_all()
+    items = await repo.find_all(is_active=is_active)
     return items
 
 
@@ -1396,10 +1381,10 @@ async def get_professional_learning_trajectory_events(
 async def get_professional_learning_trajectory_event_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     repo = ProfessionalLearningTrajectoryEventRepository(session)
-    item = await repo.get_by_id(item_id)
+    item = await repo.find_one(id=item_id, is_active=is_active)
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -1533,7 +1518,6 @@ async def delete_professional_learning_trajectory_event(
 )
 async def get_professional_learning_trajectory_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ProfessionalLearningTrajectoryContactRepository(session)
     items = await repo.get_all()
@@ -1547,7 +1531,6 @@ async def get_professional_learning_trajectory_contacts(
 async def get_professional_learning_trajectory_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     repo = ProfessionalLearningTrajectoryContactRepository(session)
     item = await repo.get_by_id(item_id)

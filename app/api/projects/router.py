@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.file.service import file_service, DOCUMENTS_FOLDER
 from core.models import User
 from core.db_helper import db_helper
-from api.dependencies import get_current_active_user
+from api.dependencies import get_current_active_user, verify_active_param_access
 from api.projects.repository import ProjectRepository
 from api.projects.schemas import (
     ProjectCreate,
@@ -22,20 +22,10 @@ router = APIRouter()
 @router.get("/", response_model=list[ProjectResponse])
 async def get_projects(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     project_repo = ProjectRepository(session)
-    projects = await project_repo.get_all()
-    return projects
-
-
-@router.get("/active/", response_model=list[ProjectResponse])
-async def get_active_projects(
-    session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
-):
-    project_repo = ProjectRepository(session)
-    projects = await project_repo.get_all_active()
+    projects = await project_repo.find_all(is_active=is_active)
     return projects
 
 
@@ -43,10 +33,10 @@ async def get_active_projects(
 async def get_project_by_id(
     project_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     project_repo = ProjectRepository(session)
-    project = await project_repo.get_by_id(project_id)
+    project = await project_repo.find_one(id=project_id, is_active=is_active)
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -56,7 +56,6 @@ async def get_banners(
     skip: int = 0,
     limit: int = 6,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     banner_repo = BannerRepository(session)
     banners = await banner_repo.get_all()
@@ -75,10 +74,13 @@ async def get_banners(
 async def get_banner_by_id(
     banner_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
+    is_active: bool = Depends(verify_active_param_access),
 ):
     banner_repo = BannerRepository(session)
-    banner = await banner_repo.get_by_id(banner_id)
+    banner = await banner_repo.find_one(
+        id=banner_id,
+        is_active=is_active,
+    )
     if not banner:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

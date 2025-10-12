@@ -22,7 +22,6 @@ router = APIRouter()
 @router.get("/", response_model=list[DocumentResponse])
 async def get_documents(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     doc_repo = DocumentRepository(session)
     documents = await doc_repo.get_all()
@@ -33,7 +32,6 @@ async def get_documents(
 async def get_document_by_id(
     document_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     doc_repo = DocumentRepository(session)
     document = await doc_repo.get_by_id(document_id)

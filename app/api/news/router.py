@@ -24,7 +24,6 @@ router = APIRouter()
 @router.get("/", response_model=list[NewsFullResponse])
 async def get_news(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     news_repo = NewsRepository(session)
     news = await news_repo.get_all()
@@ -36,7 +35,6 @@ async def get_news_preview(
     skip: int = 0,
     limit: int = 10,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     news_repo = NewsRepository(session)
     news = await news_repo.get_all()

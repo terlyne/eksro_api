@@ -22,7 +22,6 @@ router = APIRouter()
 @router.get("/", response_model=list[ApplicationFormResponse])
 async def get_application_forms(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     app_form_repo = ApplicationFormRepository(session)
     application_forms = await app_form_repo.get_all()
@@ -33,7 +32,6 @@ async def get_application_forms(
 async def get_application_form_by_id(
     application_form_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     app_form_repo = ApplicationFormRepository(session)
     application_form = await app_form_repo.get_by_id(application_form_id)

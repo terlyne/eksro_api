@@ -22,7 +22,6 @@ router = APIRouter()
 @router.get("/", response_model=list[PartnerResponse])
 async def get_partners(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     partner_repo = PartnerRepository(session)
     partners = await partner_repo.get_all()
@@ -33,7 +32,6 @@ async def get_partners(
 async def get_partner_by_id(
     partner_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     partner_repo = PartnerRepository(session)
     partner = await partner_repo.get_by_id(partner_id)

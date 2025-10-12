@@ -50,7 +50,6 @@ async def create_subscriber(
     email: Annotated[str, Form()],
     type_id: Annotated[uuid.UUID, Form()],
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     subscriber_repo = SubscriberRepository(session)
     subscriber = await subscriber_repo.create(
@@ -67,7 +66,6 @@ async def update_subscriber(
     type_id: Annotated[uuid.UUID | None, Form()] = None,
     is_confirmed: Annotated[bool | None, Form()] = None,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     subscriber_repo = SubscriberRepository(session)
     subscriber = await subscriber_repo.update(
