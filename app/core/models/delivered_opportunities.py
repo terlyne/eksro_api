@@ -10,10 +10,6 @@ class DeliveredOpportunity(Base, IdMixin):
     Модель для хранения доставляемых возможностей
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum")
-    )
     # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
     subpage: Mapped[str] = mapped_column(
         String(100),
