@@ -45,8 +45,6 @@ async def get_contact_by_id(
 
 @router.post("/", response_model=ContactResponse)
 async def create_contact(
-    site_section: Annotated[str, Form()],
-    subpage: Annotated[str | None, Form()] = None,
     email: Annotated[str | None, Form()] = None,
     phone: Annotated[str, Form()] = None,
     address: Annotated[str | None, Form()] = None,
@@ -73,8 +71,6 @@ async def create_contact(
     # Создаем запись о контакте
     contact_repo = ContactRepository(session)
     contact = await contact_repo.create(
-        site_section=site_section,
-        subpage=subpage,
         email=email,
         phone=phone,
         address=address,
@@ -94,8 +90,6 @@ async def create_contact(
 @router.put("/{contact_id}/", response_model=ContactResponse)
 async def update_contact(
     contact_id: uuid.UUID,
-    site_section: Annotated[str | None, Form()] = None,
-    subpage: Annotated[str | None, Form()] = None,
     email: Annotated[str | None, Form()] = None,
     phone: Annotated[str | None, Form()] = None,
     address: Annotated[str | None, Form()] = None,
@@ -135,8 +129,6 @@ async def update_contact(
     # Обновляем информацию о контакте
     contact = await contact_repo.update(
         obj_id=contact_id,
-        site_section=site_section,
-        subpage=subpage,
         email=email,
         phone=phone,
         address=address,

@@ -45,10 +45,8 @@ async def get_document_by_id(
 
 @router.post("/", response_model=DocumentResponse)
 async def create_document(
-    site_section: Annotated[str, Form()],
     title: Annotated[str, Form()],
     file: UploadFile,  # Файл документа
-    subpage: Annotated[str | None, Form()] = None,
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),
 ):
@@ -61,8 +59,6 @@ async def create_document(
     # Создаем запись о документе
     doc_repo = DocumentRepository(session)
     document = await doc_repo.create(
-        site_section=site_section,
-        subpage=subpage,
         title=title,
         file_url=file_url,
     )
@@ -72,8 +68,6 @@ async def create_document(
 @router.put("/{document_id}/", response_model=DocumentResponse)
 async def update_document(
     document_id: uuid.UUID,
-    site_section: Annotated[str | None, Form()] = None,
-    subpage: Annotated[str | None, Form()] = None,
     title: Annotated[str | None, Form()] = None,
     file: UploadFile | None = None,  # Файл документа (опционально)
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -102,8 +96,6 @@ async def update_document(
     # Обновляем информацию о документе
     document = await doc_repo.update(
         obj_id=document_id,
-        site_section=site_section,
-        subpage=subpage,
         title=title,
         file_url=file_url,
     )

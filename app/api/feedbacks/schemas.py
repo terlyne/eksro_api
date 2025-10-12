@@ -5,10 +5,6 @@ from pydantic import BaseModel, Field
 
 
 class FeedbackBase(BaseModel):
-    # Тип страницы, на которой отображаются отзывы (обязательное поле)
-    site_section: str
-    # Подраздел секции/страницы сайта (опциональное поле)
-    subpage: str | None = None
     # Имя
     name: Annotated[str, Field(max_length=10)]
     # Номер телефона (опционально скорее всего)

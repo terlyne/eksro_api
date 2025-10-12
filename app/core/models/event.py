@@ -10,7 +10,7 @@ from core.models.mixins.id import IdMixin
 class Event(Base, IdMixin):
     # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
     site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum")
+        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.ABOUT
     )
     # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
     subpage: Mapped[str] = mapped_column(
