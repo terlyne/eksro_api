@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.file.service import file_service, DOCUMENTS_FOLDER
+from core.file.service import file_service, DELIVERED_OPPORTUNITIES_FOLDER
 from core.models import User
 from core.db_helper import db_helper
 from api.dependencies import get_current_active_user
@@ -60,7 +60,7 @@ async def create_delivered_opportunity(
     if image_file:
         image_url = await file_service.save_file(
             upload_file=image_file,
-            subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
+            subdirectory=DELIVERED_OPPORTUNITIES_FOLDER,
         )
 
     # Создаем запись о доставляемой возможности
@@ -110,7 +110,7 @@ async def update_delivered_opportunity(
         # Сохраняем новое изображение
         image_url = await file_service.save_file(
             upload_file=image_file,
-            subdirectory=DOCUMENTS_FOLDER,
+            subdirectory=DELIVERED_OPPORTUNITIES_FOLDER,
         )
 
     # Обновляем информацию о доставляемой возможности

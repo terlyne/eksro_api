@@ -45,7 +45,21 @@ class FileService:
         subdirectory: str,
     ) -> str:
         # Валидация файла в зависимости от типа
-        if subdirectory.startswith(IMAGES_FOLDER):
+        # Проверяем, является ли папка папкой для изображений
+        image_folders = [
+            IMAGES_FOLDER,
+            DELIVERED_OPPORTUNITIES_FOLDER,
+            ABOUT_ORGANIZATION_FOLDER,
+            PARENT_SECTION_FOLDER,
+            SOVIET_SECTION_FOLDER,
+            ORGANIZATION_SECTION_FOLDER,
+            APPLICATION_FORM_FOLDER,
+        ]
+        is_image_folder = any(
+            subdirectory.startswith(folder) for folder in image_folders
+        )
+
+        if is_image_folder:
             await self._validate_image_file(upload_file)
         elif subdirectory.startswith(DOCUMENTS_FOLDER):
             await self._validate_document_file(upload_file)
