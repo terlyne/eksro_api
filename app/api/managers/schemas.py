@@ -5,6 +5,10 @@ from pydantic import BaseModel, Field
 
 
 class ManagerBase(BaseModel):
+    # Тип страницы, на которой отображаются контакты (обязательное поле)
+    site_section: str
+    # Подраздел секции/страницы сайта (опциональное поле)
+    subpage: str | None = None
     # Фотография члена руководства
     image_url: Annotated[str, Field(max_length=500)] | None = None
     # ФИО

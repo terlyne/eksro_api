@@ -50,9 +50,11 @@ async def get_feedback_by_id(
 
 @router.post("/", response_model=FeedbackResponse)
 async def create_feedback(
+    site_section: Annotated[str, Form()],
     name: Annotated[str, Form()],
     email: Annotated[str, Form()],
     message: Annotated[str, Form()],
+    subpage: Annotated[str | None, Form()] = None,
     phone: Annotated[str | None, Form()] = None,
     image: UploadFile | None = None,  # Файл изображения (опционально)
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -68,6 +70,8 @@ async def create_feedback(
     # Создаем запись об обратной связи
     feedback_repo = FeedbackRepository(session)
     feedback = await feedback_repo.create(
+        site_section=site_section,
+        subpage=subpage,
         name=name,
         email=email,
         message=message,
@@ -80,6 +84,8 @@ async def create_feedback(
 @router.put("/{feedback_id}/", response_model=FeedbackResponse)
 async def update_feedback(
     feedback_id: uuid.UUID,
+    site_section: Annotated[str | None, Form()] = None,
+    subpage: Annotated[str | None, Form()] = None,
     name: Annotated[str | None, Form()] = None,
     email: Annotated[str | None, Form()] = None,
     message: Annotated[str | None, Form()] = None,
@@ -112,6 +118,8 @@ async def update_feedback(
     # Обновляем информацию об обратной связи
     feedback = await feedback_repo.update(
         obj_id=feedback_id,
+        site_section=site_section,
+        subpage=subpage,
         name=name,
         email=email,
         message=message,

@@ -5,14 +5,18 @@ from pydantic import BaseModel, Field
 
 
 class FeedbackBase(BaseModel):
+    # Тип страницы, на которой отображаются отзывы (обязательное поле)
+    site_section: str
+    # Подраздел секции/страницы сайта (опциональное поле)
+    subpage: str | None = None
     # Имя
-    name: Annotated[str, Field(max_length=100)]
+    name: Annotated[str, Field(max_length=10)]
     # Номер телефона (опционально скорее всего)
     phone: Annotated[str, Field(max_length=30)] | None = None
     # Адрес эл. почты
     email: Annotated[str, Field(max_length=320)] | None = None
     # Текст сообщения
-    message: Annotated[str, Field(max_length=1000)]
+    message: Annotated[str, Field(max_length=100)]
     # Ответ на сообщение
     response: Annotated[str, Field(max_length=1000)] | None = None
 

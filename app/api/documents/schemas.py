@@ -5,6 +5,10 @@ from pydantic import BaseModel, Field
 
 
 class DocumentBase(BaseModel):
+    # Тип страницы, на которой отображаются документы (обязательное поле)
+    site_section: str
+    # Подраздел секции/страницы сайта (опциональное поле)
+    subpage: str | None = None
     # Название/заголовок документа
     title: Annotated[str, Field(max_length=200)]
     # Сам файл документа

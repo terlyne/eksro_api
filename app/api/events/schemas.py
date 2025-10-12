@@ -6,6 +6,10 @@ from pydantic import BaseModel, Field
 
 
 class EventBase(BaseModel):
+    # Тип страницы, на которой отображаются события (обязательное поле)
+    site_section: str
+    # Подраздел секции/страницы сайта (опциональное поле)
+    subpage: str | None = None
     # Заголовок/название мероприятия
     title: Annotated[str, Field(max_length=200)]
     # Описание мероприятия

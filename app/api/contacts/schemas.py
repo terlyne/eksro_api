@@ -6,6 +6,10 @@ from pydantic import BaseModel, Field
 
 
 class ContactBase(BaseModel):
+    # Тип страницы, на которой отображаются контакты (обязательное поле)
+    site_section: str
+    # Подраздел секции/страницы сайта (опциональное поле)
+    subpage: str | None = None
     # Контактный email
     email: Annotated[str, Field(max_length=320)] | None = None
     # Контактный номер телефона
@@ -17,7 +21,7 @@ class ContactBase(BaseModel):
     # ТГ канал ссылка
     tg_channel: Annotated[str, Field(max_length=500)] | None = None
     # Дисциплина ответственного лица
-    discipline: Annotated[str, Field(max_length=200)] | None = None
+    discipline: Annotated[str, Field(max_length=20)] | None = None
     # Фотография ответственного лица
     image_url: Annotated[str, Field(max_length=500)] | None = None
     # Режим и график работы

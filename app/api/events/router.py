@@ -47,8 +47,10 @@ async def get_event_by_id(
 
 @router.post("/", response_model=EventResponse)
 async def create_event(
+    site_section: Annotated[str, Form()],
     title: Annotated[str, Form()],
     description: Annotated[str, Form()],
+    subpage: Annotated[str | None, Form()] = None,
     event_date: Annotated[str | None, Form()] = None,  # Формат: dd.mm.YYYY hh:mm
     location: Annotated[str | None, Form()] = None,
     image: UploadFile | None = None,  # Файл изображения (опционально)
@@ -67,6 +69,8 @@ async def create_event(
     # Создаем запись о мероприятии
     event_repo = EventRepository(session)
     event = await event_repo.create(
+        site_section=site_section,
+        subpage=subpage,
         title=title,
         description=description,
         event_date=event_date,
@@ -80,6 +84,8 @@ async def create_event(
 @router.put("/{event_id}/", response_model=EventResponse)
 async def update_event(
     event_id: uuid.UUID,
+    site_section: Annotated[str | None, Form()] = None,
+    subpage: Annotated[str | None, Form()] = None,
     title: Annotated[str | None, Form()] = None,
     description: Annotated[str | None, Form()] = None,
     event_date: Annotated[str | None, Form()] = None,  # Формат: dd.mm.YYYY hh:mm
@@ -113,6 +119,8 @@ async def update_event(
     # Обновляем информацию о мероприятии
     event = await event_repo.update(
         obj_id=event_id,
+        site_section=site_section,
+        subpage=subpage,
         title=title,
         description=description,
         event_date=event_date,
