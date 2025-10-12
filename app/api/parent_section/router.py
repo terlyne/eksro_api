@@ -66,7 +66,7 @@ router = APIRouter()
 
 
 # Parent Documents
-@router.get("/parent-documents", response_model=list[ParentDocumentResponse])
+@router.get("/parent/documents/", response_model=list[ParentDocumentResponse])
 async def get_parent_documents(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
@@ -75,7 +75,7 @@ async def get_parent_documents(
     return items
 
 
-@router.get("/parent-documents/{item_id}", response_model=ParentDocumentResponse)
+@router.get("/parent/documents/{item_id}/", response_model=ParentDocumentResponse)
 async def get_parent_document_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -90,7 +90,7 @@ async def get_parent_document_by_id(
     return item
 
 
-@router.post("/parent-documents", response_model=ParentDocumentResponse)
+@router.post("/parent/documents/", response_model=ParentDocumentResponse)
 async def create_parent_document(
     title: Annotated[str, Form()],
     file: UploadFile,  # Файл документа
@@ -112,7 +112,7 @@ async def create_parent_document(
     return item
 
 
-@router.put("/parent-documents/{item_id}", response_model=ParentDocumentResponse)
+@router.put("/parent/documents/{item_id}/", response_model=ParentDocumentResponse)
 async def update_parent_document(
     item_id: uuid.UUID,
     title: Annotated[str | None, Form()] = None,
@@ -150,7 +150,7 @@ async def update_parent_document(
     return item
 
 
-@router.delete("/parent-documents/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/parent/documents/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_parent_document(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -179,7 +179,7 @@ async def delete_parent_document(
 
 
 # Parent Contacts
-@router.get("/parent-contacts", response_model=list[ParentContactResponse])
+@router.get("/parent/contacts/", response_model=list[ParentContactResponse])
 async def get_parent_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
@@ -188,7 +188,7 @@ async def get_parent_contacts(
     return items
 
 
-@router.get("/parent-contacts/{item_id}", response_model=ParentContactResponse)
+@router.get("/parent/contacts/{item_id}/", response_model=ParentContactResponse)
 async def get_parent_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -204,7 +204,7 @@ async def get_parent_contact_by_id(
     return item
 
 
-@router.post("/parent-contacts", response_model=ParentContactResponse)
+@router.post("/parent/contacts/", response_model=ParentContactResponse)
 async def create_parent_contact(
     full_name: Annotated[str, Form()],
     discipline: Annotated[str, Form()],
@@ -223,7 +223,7 @@ async def create_parent_contact(
     return item
 
 
-@router.put("/parent-contacts/{item_id}", response_model=ParentContactResponse)
+@router.put("/parent/contacts/{item_id}/", response_model=ParentContactResponse)
 async def update_parent_contact(
     item_id: uuid.UUID,
     full_name: Annotated[str | None, Form()] = None,
@@ -251,7 +251,7 @@ async def update_parent_contact(
     return item
 
 
-@router.delete("/parent-contacts/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/parent/contacts/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_parent_contact(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -269,7 +269,7 @@ async def delete_parent_contact(
 
 # Thematic Meeting Participants
 @router.get(
-    "/thematic-meeting-participants",
+    "/thematic-meeting/participants/",
     response_model=list[ThematicMeetingParticipantResponse],
 )
 async def get_thematic_meeting_participants(
@@ -281,7 +281,7 @@ async def get_thematic_meeting_participants(
 
 
 @router.get(
-    "/thematic-meeting-participants/{item_id}",
+    "/thematic-meeting/participants/{item_id}/",
     response_model=ThematicMeetingParticipantResponse,
 )
 async def get_thematic_meeting_participant_by_id(
@@ -299,7 +299,7 @@ async def get_thematic_meeting_participant_by_id(
 
 
 @router.post(
-    "/thematic-meeting-participants", response_model=ThematicMeetingParticipantResponse
+    "/thematic-meeting/participants/", response_model=ThematicMeetingParticipantResponse
 )
 async def create_thematic_meeting_participant(
     first_name: Annotated[str, Form()],
@@ -326,7 +326,7 @@ async def create_thematic_meeting_participant(
 
 
 @router.put(
-    "/thematic-meeting-participants/{item_id}",
+    "/thematic-meeting/participants/{item_id}/",
     response_model=ThematicMeetingParticipantResponse,
 )
 async def update_thematic_meeting_participant(
@@ -370,7 +370,7 @@ async def update_thematic_meeting_participant(
 
 
 @router.delete(
-    "/thematic-meeting-participants/{item_id}", status_code=status.HTTP_204_NO_CONTENT
+    "/thematic-meeting/participants/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_thematic_meeting_participant(
     item_id: uuid.UUID,
@@ -402,7 +402,7 @@ async def delete_thematic_meeting_participant(
 
 # Thematic Meeting Events
 @router.get(
-    "/thematic-meeting-events", response_model=list[ThematicMeetingEventResponse]
+    "/thematic-meeting/events/", response_model=list[ThematicMeetingEventResponse]
 )
 async def get_thematic_meeting_events(
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -414,7 +414,7 @@ async def get_thematic_meeting_events(
 
 
 @router.get(
-    "/thematic-meeting-events/{item_id}", response_model=ThematicMeetingEventResponse
+    "/thematic-meeting/events/{item_id}/", response_model=ThematicMeetingEventResponse
 )
 async def get_thematic_meeting_event_by_id(
     item_id: uuid.UUID,
@@ -431,7 +431,7 @@ async def get_thematic_meeting_event_by_id(
     return item
 
 
-@router.post("/thematic-meeting-events", response_model=ThematicMeetingEventResponse)
+@router.post("/thematic-meeting/events/", response_model=ThematicMeetingEventResponse)
 async def create_thematic_meeting_event(
     title: Annotated[str, Form()],
     description: Annotated[str, Form()],
@@ -463,7 +463,7 @@ async def create_thematic_meeting_event(
 
 
 @router.put(
-    "/thematic-meeting-events/{item_id}", response_model=ThematicMeetingEventResponse
+    "/thematic-meeting/events/{item_id}/", response_model=ThematicMeetingEventResponse
 )
 async def update_thematic_meeting_event(
     item_id: uuid.UUID,
@@ -512,7 +512,7 @@ async def update_thematic_meeting_event(
 
 
 @router.delete(
-    "/thematic-meeting-events/{item_id}", status_code=status.HTTP_204_NO_CONTENT
+    "/thematic-meeting/events/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_thematic_meeting_event(
     item_id: uuid.UUID,
@@ -544,7 +544,7 @@ async def delete_thematic_meeting_event(
 
 # Thematic Meeting Contacts
 @router.get(
-    "/thematic-meeting-contacts", response_model=list[ThematicMeetingContactResponse]
+    "/thematic-meeting/contacts/", response_model=list[ThematicMeetingContactResponse]
 )
 async def get_thematic_meeting_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -555,7 +555,7 @@ async def get_thematic_meeting_contacts(
 
 
 @router.get(
-    "/thematic-meeting-contacts/{item_id}",
+    "/thematic-meeting/contacts/{item_id}/",
     response_model=ThematicMeetingContactResponse,
 )
 async def get_thematic_meeting_contact_by_id(
@@ -573,7 +573,7 @@ async def get_thematic_meeting_contact_by_id(
 
 
 @router.post(
-    "/thematic-meeting-contacts", response_model=ThematicMeetingContactResponse
+    "/thematic-meeting/contacts/", response_model=ThematicMeetingContactResponse
 )
 async def create_thematic_meeting_contact(
     full_name: Annotated[str, Form()],
@@ -604,7 +604,7 @@ async def create_thematic_meeting_contact(
 
 
 @router.put(
-    "/thematic-meeting-contacts/{item_id}",
+    "/thematic-meeting/contacts/{item_id}/",
     response_model=ThematicMeetingContactResponse,
 )
 async def update_thematic_meeting_contact(
@@ -652,7 +652,7 @@ async def update_thematic_meeting_contact(
 
 
 @router.delete(
-    "/thematic-meeting-contacts/{item_id}", status_code=status.HTTP_204_NO_CONTENT
+    "/thematic-meeting/contacts/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_thematic_meeting_contact(
     item_id: uuid.UUID,
@@ -684,7 +684,7 @@ async def delete_thematic_meeting_contact(
 
 # Etiquette in Education Documents
 @router.get(
-    "/etiquette-in-education-documents",
+    "/etiquette-in-education/documents/",
     response_model=list[EtiquetteInEducationDocumentResponse],
 )
 async def get_etiquette_in_education_documents(
@@ -696,7 +696,7 @@ async def get_etiquette_in_education_documents(
 
 
 @router.get(
-    "/etiquette-in-education-documents/{item_id}",
+    "/etiquette-in-education/documents/{item_id}/",
     response_model=EtiquetteInEducationDocumentResponse,
 )
 async def get_etiquette_in_education_document_by_id(
@@ -714,7 +714,7 @@ async def get_etiquette_in_education_document_by_id(
 
 
 @router.post(
-    "/etiquette-in-education-documents",
+    "/etiquette-in-education/documents/",
     response_model=EtiquetteInEducationDocumentResponse,
 )
 async def create_etiquette_in_education_document(
@@ -738,7 +738,7 @@ async def create_etiquette_in_education_document(
 
 
 @router.put(
-    "/etiquette-in-education-documents/{item_id}",
+    "/etiquette-in-education/documents/{item_id}/",
     response_model=EtiquetteInEducationDocumentResponse,
 )
 async def update_etiquette_in_education_document(
@@ -779,7 +779,7 @@ async def update_etiquette_in_education_document(
 
 
 @router.delete(
-    "/etiquette-in-education-documents/{item_id}",
+    "/etiquette-in-education/documents/{item_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_etiquette_in_education_document(
@@ -811,7 +811,7 @@ async def delete_etiquette_in_education_document(
 
 # Etiquette in Education Events
 @router.get(
-    "/etiquette-in-education-events",
+    "/etiquette-in-education/events/",
     response_model=list[EtiquetteInEducationEventResponse],
 )
 async def get_etiquette_in_education_events(
@@ -824,7 +824,7 @@ async def get_etiquette_in_education_events(
 
 
 @router.get(
-    "/etiquette-in-education-events/{item_id}",
+    "/etiquette-in-education/events/{item_id}/",
     response_model=EtiquetteInEducationEventResponse,
 )
 async def get_etiquette_in_education_event_by_id(
@@ -843,7 +843,7 @@ async def get_etiquette_in_education_event_by_id(
 
 
 @router.post(
-    "/etiquette-in-education-events", response_model=EtiquetteInEducationEventResponse
+    "/etiquette-in-education/events/", response_model=EtiquetteInEducationEventResponse
 )
 async def create_etiquette_in_education_event(
     title: Annotated[str, Form()],
@@ -876,7 +876,7 @@ async def create_etiquette_in_education_event(
 
 
 @router.put(
-    "/etiquette-in-education-events/{item_id}",
+    "/etiquette-in-education/events/{item_id}/",
     response_model=EtiquetteInEducationEventResponse,
 )
 async def update_etiquette_in_education_event(
@@ -926,7 +926,7 @@ async def update_etiquette_in_education_event(
 
 
 @router.delete(
-    "/etiquette-in-education-events/{item_id}", status_code=status.HTTP_204_NO_CONTENT
+    "/etiquette-in-education/events/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_etiquette_in_education_event(
     item_id: uuid.UUID,
@@ -958,7 +958,7 @@ async def delete_etiquette_in_education_event(
 
 # Etiquette in Education Contacts
 @router.get(
-    "/etiquette-in-education-contacts",
+    "/etiquette-in-education/contacts/",
     response_model=list[EtiquetteInEducationContactResponse],
 )
 async def get_etiquette_in_education_contacts(
@@ -970,7 +970,7 @@ async def get_etiquette_in_education_contacts(
 
 
 @router.get(
-    "/etiquette-in-education-contacts/{item_id}",
+    "/etiquette-in-education/contacts/{item_id}/",
     response_model=EtiquetteInEducationContactResponse,
 )
 async def get_etiquette_in_education_contact_by_id(
@@ -988,7 +988,7 @@ async def get_etiquette_in_education_contact_by_id(
 
 
 @router.post(
-    "/etiquette-in-education-contacts",
+    "/etiquette-in-education/contacts/",
     response_model=EtiquetteInEducationContactResponse,
 )
 async def create_etiquette_in_education_contact(
@@ -1020,7 +1020,7 @@ async def create_etiquette_in_education_contact(
 
 
 @router.put(
-    "/etiquette-in-education-contacts/{item_id}",
+    "/etiquette-in-education/contacts/{item_id}/",
     response_model=EtiquetteInEducationContactResponse,
 )
 async def update_etiquette_in_education_contact(
@@ -1068,7 +1068,8 @@ async def update_etiquette_in_education_contact(
 
 
 @router.delete(
-    "/etiquette-in-education-contacts/{item_id}", status_code=status.HTTP_204_NO_CONTENT
+    "/etiquette-in-education/contacts/{item_id}/",
+    status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_etiquette_in_education_contact(
     item_id: uuid.UUID,
@@ -1100,7 +1101,7 @@ async def delete_etiquette_in_education_contact(
 
 # Professional Learning Trajectory Documents
 @router.get(
-    "/professional-learning-trajectory-documents",
+    "/professional-learning-trajectory/documents/",
     response_model=list[ProfessionalLearningTrajectoryDocumentResponse],
 )
 async def get_professional_learning_trajectory_documents(
@@ -1112,7 +1113,7 @@ async def get_professional_learning_trajectory_documents(
 
 
 @router.get(
-    "/professional-learning-trajectory-documents/{item_id}",
+    "/professional-learning-trajectory/documents/{item_id}/",
     response_model=ProfessionalLearningTrajectoryDocumentResponse,
 )
 async def get_professional_learning_trajectory_document_by_id(
@@ -1130,7 +1131,7 @@ async def get_professional_learning_trajectory_document_by_id(
 
 
 @router.post(
-    "/professional-learning-trajectory-documents",
+    "/professional-learning-trajectory/documents/",
     response_model=ProfessionalLearningTrajectoryDocumentResponse,
 )
 async def create_professional_learning_trajectory_document(
@@ -1154,7 +1155,7 @@ async def create_professional_learning_trajectory_document(
 
 
 @router.put(
-    "/professional-learning-trajectory-documents/{item_id}",
+    "/professional-learning-trajectory/documents/{item_id}/",
     response_model=ProfessionalLearningTrajectoryDocumentResponse,
 )
 async def update_professional_learning_trajectory_document(
@@ -1195,7 +1196,7 @@ async def update_professional_learning_trajectory_document(
 
 
 @router.delete(
-    "/professional-learning-trajectory-documents/{item_id}",
+    "/professional-learning-trajectory/documents/{item_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_professional_learning_trajectory_document(
@@ -1227,7 +1228,7 @@ async def delete_professional_learning_trajectory_document(
 
 # Professional Learning Trajectory Participants
 @router.get(
-    "/professional-learning-trajectory-participants",
+    "/professional-learning-trajectory/participants/",
     response_model=list[ProfessionalLearningTrajectoryParticipantResponse],
 )
 async def get_professional_learning_trajectory_participants(
@@ -1239,7 +1240,7 @@ async def get_professional_learning_trajectory_participants(
 
 
 @router.get(
-    "/professional-learning-trajectory-participants/{item_id}",
+    "/professional-learning-trajectory/participants/{item_id}/",
     response_model=ProfessionalLearningTrajectoryParticipantResponse,
 )
 async def get_professional_learning_trajectory_participant_by_id(
@@ -1257,7 +1258,7 @@ async def get_professional_learning_trajectory_participant_by_id(
 
 
 @router.post(
-    "/professional-learning-trajectory-participants",
+    "/professional-learning-trajectory/participants/",
     response_model=ProfessionalLearningTrajectoryParticipantResponse,
 )
 async def create_professional_learning_trajectory_participant(
@@ -1285,7 +1286,7 @@ async def create_professional_learning_trajectory_participant(
 
 
 @router.put(
-    "/professional-learning-trajectory-participants/{item_id}",
+    "/professional-learning-trajectory/participants/{item_id}/",
     response_model=ProfessionalLearningTrajectoryParticipantResponse,
 )
 async def update_professional_learning_trajectory_participant(
@@ -1329,7 +1330,7 @@ async def update_professional_learning_trajectory_participant(
 
 
 @router.delete(
-    "/professional-learning-trajectory-participants/{item_id}",
+    "/professional-learning-trajectory/participants/{item_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_professional_learning_trajectory_participant(
@@ -1362,7 +1363,7 @@ async def delete_professional_learning_trajectory_participant(
 
 # Professional Learning Trajectory Events
 @router.get(
-    "/professional-learning-trajectory-events",
+    "/professional-learning-trajectory/events/",
     response_model=list[ProfessionalLearningTrajectoryEventResponse],
 )
 async def get_professional_learning_trajectory_events(
@@ -1375,7 +1376,7 @@ async def get_professional_learning_trajectory_events(
 
 
 @router.get(
-    "/professional-learning-trajectory-events/{item_id}",
+    "/professional-learning-trajectory/events/{item_id}/",
     response_model=ProfessionalLearningTrajectoryEventResponse,
 )
 async def get_professional_learning_trajectory_event_by_id(
@@ -1394,7 +1395,7 @@ async def get_professional_learning_trajectory_event_by_id(
 
 
 @router.post(
-    "/professional-learning-trajectory-events",
+    "/professional-learning-trajectory/events/",
     response_model=ProfessionalLearningTrajectoryEventResponse,
 )
 async def create_professional_learning_trajectory_event(
@@ -1428,7 +1429,7 @@ async def create_professional_learning_trajectory_event(
 
 
 @router.put(
-    "/professional-learning-trajectory-events/{item_id}",
+    "/professional-learning-trajectory/events/{item_id}/",
     response_model=ProfessionalLearningTrajectoryEventResponse,
 )
 async def update_professional_learning_trajectory_event(
@@ -1478,7 +1479,7 @@ async def update_professional_learning_trajectory_event(
 
 
 @router.delete(
-    "/professional-learning-trajectory-events/{item_id}",
+    "/professional-learning-trajectory/events/{item_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_professional_learning_trajectory_event(
@@ -1513,7 +1514,7 @@ async def delete_professional_learning_trajectory_event(
 
 # Professional Learning Trajectory Contacts
 @router.get(
-    "/professional-learning-trajectory-contacts",
+    "/professional-learning-trajectory/contacts/",
     response_model=list[ProfessionalLearningTrajectoryContactResponse],
 )
 async def get_professional_learning_trajectory_contacts(
@@ -1525,7 +1526,7 @@ async def get_professional_learning_trajectory_contacts(
 
 
 @router.get(
-    "/professional-learning-trajectory-contacts/{item_id}",
+    "/professional-learning-trajectory/contacts/{item_id}/",
     response_model=ProfessionalLearningTrajectoryContactResponse,
 )
 async def get_professional_learning_trajectory_contact_by_id(
@@ -1543,7 +1544,7 @@ async def get_professional_learning_trajectory_contact_by_id(
 
 
 @router.post(
-    "/professional-learning-trajectory-contacts",
+    "/professional-learning-trajectory/contacts/",
     response_model=ProfessionalLearningTrajectoryContactResponse,
 )
 async def create_professional_learning_trajectory_contact(
@@ -1565,7 +1566,7 @@ async def create_professional_learning_trajectory_contact(
 
 
 @router.put(
-    "/professional-learning-trajectory-contacts/{item_id}",
+    "/professional-learning-trajectory/contacts/{item_id}/",
     response_model=ProfessionalLearningTrajectoryContactResponse,
 )
 async def update_professional_learning_trajectory_contact(
@@ -1596,7 +1597,7 @@ async def update_professional_learning_trajectory_contact(
 
 
 @router.delete(
-    "/professional-learning-trajectory-contacts/{item_id}",
+    "/professional-learning-trajectory/contacts/{item_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_professional_learning_trajectory_contact(
