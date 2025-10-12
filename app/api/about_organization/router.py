@@ -8,6 +8,9 @@ from core.file.service import file_service, DOCUMENTS_FOLDER
 from core.models import User
 from core.db_helper import db_helper
 from api.dependencies import get_current_active_user
+from api.delivered_opportunities.router import router as delivered_opportunities_router
+from api.managers.router import router as managers_router
+from api.documents.router import router as documents_router
 from api.about_organization.repository import AboutOrganizationRepository
 from api.about_organization.schemas import (
     AboutOrganizationCreate,
@@ -17,6 +20,20 @@ from api.about_organization.schemas import (
 
 
 router = APIRouter()
+
+
+router.include_router(
+    delivered_opportunities_router,
+    prefix="/delivered-opportunities",
+)
+router.include_router(
+    managers_router,
+    prefix="/managers",
+)
+router.include_router(
+    documents_router,
+    prefix="/documents",
+)
 
 
 @router.get("/", response_model=list[AboutOrganizationResponse])

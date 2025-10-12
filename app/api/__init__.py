@@ -28,18 +28,6 @@ from api.search.router import router as search_router
 
 router = APIRouter()
 
-about_organization_router.include_router(
-    delivered_opportunities_router,
-    prefix="/delivered-opportunities",
-)
-about_organization_router.include_router(
-    managers_router,
-    prefix="/managers",
-)
-about_organization_router.include_router(
-    documents_router,
-    prefix="/documents",
-)
 # Подключаем маршруты
 router.include_router(
     about_organization_router, prefix="/about-organization", tags=["Об организации"]
