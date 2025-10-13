@@ -171,7 +171,6 @@ async def delete_news(
 @router.get("/types/", response_model=list[NewsTypeResponse])
 async def get_news_types(
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     news_type_repo = NewsTypeRepository(session)
     return await news_type_repo.get_all()
@@ -181,7 +180,6 @@ async def get_news_types(
 async def get_news_type_by_id(
     type_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
-    user: User = Depends(get_current_active_user),
 ):
     news_type_repo = NewsTypeRepository(session)
     news_type = await news_type_repo.get_by_id(type_id)
