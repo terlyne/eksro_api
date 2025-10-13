@@ -8,7 +8,7 @@ class BannerBase(BaseModel):
     # Заголовок
     title: Annotated[str, Field(max_length=200)]
     # Описание
-    description: Annotated[str, Field(max_length=100)]
+    description: Annotated[str, Field(max_length=200)]
     # Активен ли баннер
     is_active: bool = True
     # Изображение баннера
