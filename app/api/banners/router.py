@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.file.service import file_service, BANNERS_IMAGES_FOLDER
-from core.models import User, Banner
+from core.models import User
 from core.db_helper import db_helper
 from api.dependencies import get_current_active_user, verify_active_param_access
-from api.banners.schemas import BannerResponse, BannerCreate, BannerUpdate
+from api.banners.schemas import BannerResponse
 from api.banners.repository import BannerRepository
 
 

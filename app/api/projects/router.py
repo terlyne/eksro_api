@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.file.service import file_service, DOCUMENTS_FOLDER
+from core.file.service import file_service, PROJECTS_IMAGES_FOLDER
 from core.models import User
 from core.db_helper import db_helper
 from api.dependencies import get_current_active_user, verify_active_param_access
@@ -63,7 +63,7 @@ async def create_project(
     if image:
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
+            subdirectory=PROJECTS_IMAGES_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
 
     # Создаем запись о проекте
@@ -113,7 +113,7 @@ async def update_project(
         # Сохраняем новое изображение
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
+            subdirectory=PROJECTS_IMAGES_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
 
     # Обновляем информацию о проекте
