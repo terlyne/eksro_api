@@ -39,90 +39,34 @@ from api.soviet_section.repository import (
     JournalContactRepository,
 )
 from api.soviet_section.schemas import (
-    SovietSupportDocumentCreate,
     SovietSupportDocumentResponse,
-    SovietSupportDocumentUpdate,
-    SovietSupportEventCreate,
     SovietSupportEventResponse,
-    SovietSupportEventUpdate,
-    SovietSupportApplicationCreate,
     SovietSupportApplicationResponse,
-    SovietSupportApplicationUpdate,
-    SovietLeaderCreate,
     SovietLeaderResponse,
-    SovietLeaderUpdate,
-    SovietNewsCreate,
     SovietNewsResponse,
-    SovietNewsUpdate,
-    SovietQuestionCreate,
     SovietQuestionResponse,
-    SovietQuestionUpdate,
-    SovietContactCreate,
     SovietContactResponse,
-    SovietContactUpdate,
-    LearningDocumentCreate,
     LearningDocumentResponse,
-    LearningDocumentUpdate,
-    LearningEventCreate,
     LearningEventResponse,
-    LearningEventUpdate,
-    LearningApplicationCreate,
     LearningApplicationResponse,
-    LearningApplicationUpdate,
-    LearningNewsCreate,
     LearningNewsResponse,
-    LearningNewsUpdate,
-    LearningQuestionCreate,
     LearningQuestionResponse,
-    LearningQuestionUpdate,
-    LearningContactCreate,
     LearningContactResponse,
-    LearningContactUpdate,
-    OnlineConferenceRegulationCreate,
     OnlineConferenceRegulationResponse,
-    OnlineConferenceRegulationUpdate,
-    OnlineConferenceParticipantCreate,
     OnlineConferenceParticipantResponse,
-    OnlineConferenceParticipantUpdate,
-    OnlineConferenceNewsCreate,
     OnlineConferenceNewsResponse,
-    OnlineConferenceNewsUpdate,
-    OnlineConferenceQuestionCreate,
     OnlineConferenceQuestionResponse,
-    OnlineConferenceQuestionUpdate,
-    OnlineConferenceContactCreate,
     OnlineConferenceContactResponse,
-    OnlineConferenceContactUpdate,
-    PodcastApplicationCreate,
     PodcastApplicationResponse,
-    PodcastApplicationUpdate,
-    PodcastParticipantCreate,
     PodcastParticipantResponse,
-    PodcastParticipantUpdate,
-    PodcastNewsCreate,
     PodcastNewsResponse,
-    PodcastNewsUpdate,
-    PodcastContactCreate,
     PodcastContactResponse,
-    PodcastContactUpdate,
-    ProjectNewsCreate,
     ProjectNewsResponse,
-    ProjectNewsUpdate,
-    ProjectReportCreate,
     ProjectReportResponse,
-    ProjectReportUpdate,
-    CompetitionDocumentCreate,
     CompetitionDocumentResponse,
-    CompetitionDocumentUpdate,
-    CompetitionContactCreate,
     CompetitionContactResponse,
-    CompetitionContactUpdate,
-    JournalNewsCreate,
     JournalNewsResponse,
-    JournalNewsUpdate,
-    JournalContactCreate,
     JournalContactResponse,
-    JournalContactUpdate,
 )
 
 
@@ -486,7 +430,7 @@ async def delete_soviet_support_application(
 
 
 # Soviet Leaders
-@router.get("/leaders/", response_model=list[SovietLeaderResponse])
+@router.get("/support/leaders/", response_model=list[SovietLeaderResponse])
 async def get_soviet_leaders(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
@@ -495,7 +439,7 @@ async def get_soviet_leaders(
     return items
 
 
-@router.get("/leaders/{item_id}/", response_model=SovietLeaderResponse)
+@router.get("/support/leaders/{item_id}/", response_model=SovietLeaderResponse)
 async def get_soviet_leader_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -510,7 +454,7 @@ async def get_soviet_leader_by_id(
     return item
 
 
-@router.post("/leaders/", response_model=SovietLeaderResponse)
+@router.post("/support/leaders/", response_model=SovietLeaderResponse)
 async def create_soviet_leader(
     first_name: Annotated[str, Form()],
     last_name: Annotated[str, Form()],
@@ -535,7 +479,7 @@ async def create_soviet_leader(
     return item
 
 
-@router.put("/leaders/{item_id}/", response_model=SovietLeaderResponse)
+@router.put("/support/leaders/{item_id}/", response_model=SovietLeaderResponse)
 async def update_soviet_leader(
     item_id: uuid.UUID,
     first_name: Annotated[str | None, Form()] = None,
@@ -576,7 +520,7 @@ async def update_soviet_leader(
     return item
 
 
-@router.delete("/leaders/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/support/leaders/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_soviet_leader(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -606,7 +550,7 @@ async def delete_soviet_leader(
 
 
 # Soviet News
-@router.get("/news/", response_model=list[SovietNewsResponse])
+@router.get("/support/news/", response_model=list[SovietNewsResponse])
 async def get_soviet_news(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
@@ -615,7 +559,7 @@ async def get_soviet_news(
     return items
 
 
-@router.get("/news/{item_id}/", response_model=SovietNewsResponse)
+@router.get("/support/news/{item_id}/", response_model=SovietNewsResponse)
 async def get_soviet_news_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -630,7 +574,7 @@ async def get_soviet_news_by_id(
     return item
 
 
-@router.post("/news/", response_model=SovietNewsResponse)
+@router.post("/support/news/", response_model=SovietNewsResponse)
 async def create_soviet_news(
     title: Annotated[str, Form()],
     subtitle: Annotated[str, Form()],
@@ -657,7 +601,7 @@ async def create_soviet_news(
     return item
 
 
-@router.put("/news/{item_id}/", response_model=SovietNewsResponse)
+@router.put("/support/news/{item_id}/", response_model=SovietNewsResponse)
 async def update_soviet_news(
     item_id: uuid.UUID,
     title: Annotated[str | None, Form()] = None,
@@ -700,7 +644,7 @@ async def update_soviet_news(
     return item
 
 
-@router.delete("/news/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/support/news/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_soviet_news(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -730,7 +674,7 @@ async def delete_soviet_news(
 
 
 # Soviet Questions
-@router.get("/questions/", response_model=list[SovietQuestionResponse])
+@router.get("/support/questions/", response_model=list[SovietQuestionResponse])
 async def get_soviet_questions(
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),
@@ -740,7 +684,7 @@ async def get_soviet_questions(
     return items
 
 
-@router.get("/questions/{item_id}/", response_model=SovietQuestionResponse)
+@router.get("/support/questions/{item_id}/", response_model=SovietQuestionResponse)
 async def get_soviet_question_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -756,7 +700,7 @@ async def get_soviet_question_by_id(
     return item
 
 
-@router.post("/questions/", response_model=SovietQuestionResponse)
+@router.post("/support/questions/", response_model=SovietQuestionResponse)
 async def create_soviet_question(
     name: Annotated[str, Form()],
     email: Annotated[str, Form()],
@@ -779,7 +723,7 @@ async def create_soviet_question(
     return item
 
 
-@router.put("/questions/{item_id}/", response_model=SovietQuestionResponse)
+@router.put("/support/questions/{item_id}/", response_model=SovietQuestionResponse)
 async def update_soviet_question(
     item_id: uuid.UUID,
     name: Annotated[str | None, Form()] = None,
@@ -816,7 +760,7 @@ async def update_soviet_question(
     return item
 
 
-@router.delete("/questions/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/support/questions/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_soviet_question(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -833,7 +777,7 @@ async def delete_soviet_question(
 
 
 # Soviet Contacts
-@router.get("/contacts/", response_model=list[SovietContactResponse])
+@router.get("/support/contacts/", response_model=list[SovietContactResponse])
 async def get_soviet_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
@@ -842,7 +786,7 @@ async def get_soviet_contacts(
     return items
 
 
-@router.get("/contacts/{item_id}/", response_model=SovietContactResponse)
+@router.get("/support/contacts/{item_id}/", response_model=SovietContactResponse)
 async def get_soviet_contact_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -857,7 +801,7 @@ async def get_soviet_contact_by_id(
     return item
 
 
-@router.post("/contacts/", response_model=SovietContactResponse)
+@router.post("/support/contacts/", response_model=SovietContactResponse)
 async def create_soviet_contact(
     phone: Annotated[str, Form()],
     email: Annotated[str, Form()],
@@ -876,7 +820,7 @@ async def create_soviet_contact(
     return item
 
 
-@router.put("/contacts/{item_id}/", response_model=SovietContactResponse)
+@router.put("/support/contacts/{item_id}/", response_model=SovietContactResponse)
 async def update_soviet_contact(
     item_id: uuid.UUID,
     phone: Annotated[str | None, Form()] = None,
@@ -904,7 +848,7 @@ async def update_soviet_contact(
     return item
 
 
-@router.delete("/contacts/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/support/contacts/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_soviet_contact(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),

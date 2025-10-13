@@ -1,31 +1,16 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
 
-from sqlalchemy import String, Text, DateTime, Enum as SQLEnum, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, Text, DateTime
+from sqlalchemy.orm import Mapped, mapped_column
 
-from core.models.base import Base, SiteSection, SovietSubpage
+from core.models.base import Base
 from core.models.mixins.id import IdMixin
-
-if TYPE_CHECKING:
-    from core.models.news_type import NewsType
 
 
 class SovietSupportDocument(Base, IdMixin):
     """
     Модель для хранения документов сопровождения управляющих советов в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.SUPPORT_SOVIETS,
-        nullable=True,
-    )
 
     __tablename__ = "soviet_support_documents"
 
@@ -40,17 +25,6 @@ class SovietSupportEvent(Base, IdMixin):
     """
     Модель для хранения мероприятий сопровождения управляющих советов в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.SUPPORT_SOVIETS,
-        nullable=True,
-    )
 
     __tablename__ = "soviet_support_events"
 
@@ -78,17 +52,6 @@ class SovietSupportApplication(Base, IdMixin):
     Модель для хранения заявок сопровождения управляющих советов в разделе "Управляющим советам"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.SUPPORT_SOVIETS,
-        nullable=True,
-    )
-
     __tablename__ = "soviet_support_applications"
 
     # Тип заявки ("Консультация", "Вступление в УС", "Другое")
@@ -112,17 +75,6 @@ class SovietLeader(Base, IdMixin):
     Модель для хранения лидеров управляющих советов в разделе "Управляющим советам"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.SUPPORT_SOVIETS,
-        nullable=True,
-    )
-
     __tablename__ = "soviet_leaders"
 
     # Имя
@@ -139,17 +91,6 @@ class SovietNews(Base, IdMixin):
     """
     Модель для хранения новостей управляющих советов в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.SUPPORT_SOVIETS,
-        nullable=True,
-    )
 
     __tablename__ = "soviet_news"
 
@@ -170,17 +111,6 @@ class SovietQuestion(Base, IdMixin):
     """
     Модель для хранения вопросов управляющих советов в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.SUPPORT_SOVIETS,
-        nullable=True,
-    )
 
     __tablename__ = "soviet_questions"
 
@@ -208,17 +138,6 @@ class SovietContact(Base, IdMixin):
     Модель для хранения контактов управляющих советов в разделе "Управляющим советам"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.SUPPORT_SOVIETS,
-        nullable=True,
-    )
-
     __tablename__ = "soviet_contacts"
 
     # Контактный номер телефона
@@ -239,17 +158,6 @@ class LearningDocument(Base, IdMixin):
     Модель для хранения документов в разделе "Обучение"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.LEARNING,
-        nullable=True,
-    )
-
     __tablename__ = "learning_documents"
 
     # Название/Заголовок документа
@@ -263,17 +171,6 @@ class LearningEvent(Base, IdMixin):
     """
     Модель для хранения мероприятий в разделе "Обучение"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.LEARNING,
-        nullable=True,
-    )
 
     __tablename__ = "learning_events"
 
@@ -301,17 +198,6 @@ class LearningApplication(Base, IdMixin):
     Модель для хранения заявок в разделе "Обучение"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.LEARNING,
-        nullable=True,
-    )
-
     __tablename__ = "learning_applications"
 
     # Тип заявки ("Платное", "Бесплатное" или "Другое")
@@ -335,17 +221,6 @@ class LearningNews(Base, IdMixin):
     Модель для хранения новостей в разделе "Обучение"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.LEARNING,
-        nullable=True,
-    )
-
     __tablename__ = "learning_news"
 
     # Заголовок новости
@@ -365,17 +240,6 @@ class LearningQuestion(Base, IdMixin):
     """
     Модель для хранения вопросов в разделе "Обучение"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.LEARNING,
-        nullable=True,
-    )
 
     __tablename__ = "learning_questions"
 
@@ -403,17 +267,6 @@ class LearningContact(Base, IdMixin):
     Модель для хранения контактов в разделе "Обучение"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.LEARNING,
-        nullable=True,
-    )
-
     __tablename__ = "learning_contacts"
 
     # ФИО
@@ -437,17 +290,6 @@ class OnlineConferenceRegulation(Base, IdMixin):
     Модель для хранения регламентов онлайн селекторных совещаний в разделе "Управляющим советам"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.ONLINE_CONFERENCE_CALLS,
-        nullable=True,
-    )
-
     __tablename__ = "online_conference_regulations"
 
     # Название/заголовок документа
@@ -461,17 +303,6 @@ class OnlineConferenceParticipant(Base, IdMixin):
     """
     Модель для хранения участников онлайн селекторных совещаний в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.ONLINE_CONFERENCE_CALLS,
-        nullable=True,
-    )
 
     __tablename__ = "online_conference_participants"
 
@@ -489,17 +320,6 @@ class OnlineConferenceNews(Base, IdMixin):
     """
     Модель для хранения новостей онлайн селекторных совещаний в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.ONLINE_CONFERENCE_CALLS,
-        nullable=True,
-    )
 
     __tablename__ = "online_conference_news"
 
@@ -520,17 +340,6 @@ class OnlineConferenceQuestion(Base, IdMixin):
     """
     Модель для хранения вопросов онлайн селекторных совещаний в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.ONLINE_CONFERENCE_CALLS,
-        nullable=True,
-    )
 
     __tablename__ = "online_conference_questions"
 
@@ -558,17 +367,6 @@ class OnlineConferenceContact(Base, IdMixin):
     Модель для хранения контактов онлайн селекторных совещаний в разделе "Управляющим советам"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.ONLINE_CONFERENCE_CALLS,
-        nullable=True,
-    )
-
     __tablename__ = "online_conference_contacts"
 
     # ФИО
@@ -591,17 +389,6 @@ class PodcastApplication(Base, IdMixin):
     """
     Модель для хранения заявок подкастов с командами УС в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.PODCASTS_WITH_SOVIET_TEAMS,
-        nullable=True,
-    )
 
     __tablename__ = "podcast_applications"
 
@@ -626,17 +413,6 @@ class PodcastParticipant(Base, IdMixin):
     Модель для хранения участников подкастов с командами УС в разделе "Управляющим советам"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.PODCASTS_WITH_SOVIET_TEAMS,
-        nullable=True,
-    )
-
     __tablename__ = "podcast_participants"
 
     # Видео
@@ -650,17 +426,6 @@ class PodcastNews(Base, IdMixin):
     """
     Модель для хранения новостей подкастов с командами УС в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.PODCASTS_WITH_SOVIET_TEAMS,
-        nullable=True,
-    )
 
     __tablename__ = "podcast_news"
 
@@ -681,17 +446,6 @@ class PodcastContact(Base, IdMixin):
     """
     Модель для хранения контактов подкастов с командами УС в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.PODCASTS_WITH_SOVIET_TEAMS,
-        nullable=True,
-    )
 
     __tablename__ = "podcast_contacts"
 
@@ -716,17 +470,6 @@ class ProjectNews(Base, IdMixin):
     Модель для хранения новостей банка проектов в разделе "Управляющим советам"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.PROJECTS_BANK,
-        nullable=True,
-    )
-
     __tablename__ = "project_news"
 
     # Заголовок
@@ -747,17 +490,6 @@ class ProjectReport(Base, IdMixin):
     Модель для хранения отчетов банка проектов в разделе "Управляющим советам"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.PROJECTS_BANK,
-        nullable=True,
-    )
-
     __tablename__ = "project_reports"
 
     # Наименование образовательной организации
@@ -772,17 +504,6 @@ class CompetitionDocument(Base, IdMixin):
     Модель для хранения документов конкурса в разделе "Управляющим советам"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.COMPETITION,
-        nullable=True,
-    )
-
     __tablename__ = "competition_documents"
 
     # Название документа
@@ -796,17 +517,6 @@ class CompetitionContact(Base, IdMixin):
     """
     Модель для хранения контактов конкурса в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.SOVIETS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        default=SovietSubpage.COMPETITION,
-        nullable=True,
-    )
 
     __tablename__ = "competition_contacts"
 
@@ -824,16 +534,6 @@ class JournalNews(Base, IdMixin):
     """
     Модель для хранения новостей журналов в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum")
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        nullable=True,
-    )
 
     __tablename__ = "journal_news"
 
@@ -854,16 +554,6 @@ class JournalContact(Base, IdMixin):
     """
     Модель для хранения контактов журналов в разделе "Управляющим советам"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum")
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[SovietSubpage] = mapped_column(
-        SQLEnum(SovietSubpage, name="sovietsubpage_enum"),
-        nullable=True,
-    )
 
     __tablename__ = "journal_contacts"
 

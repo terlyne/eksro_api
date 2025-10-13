@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING
 import uuid
 
-from sqlalchemy import ForeignKey, Text, String, Enum as SQLEnum
+from sqlalchemy import ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from core.models.base import Base, SiteSection
+from core.models.base import Base
 from core.models.mixins.id import IdMixin
 
 if TYPE_CHECKING:
@@ -13,16 +13,6 @@ if TYPE_CHECKING:
 
 class PollAnswer(Base, IdMixin):
     __tablename__ = "poll_answers"
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum")
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[str] = mapped_column(
-        String(100),
-        nullable=True,
-    )
 
     # Текст ответа пользователя
     answer_text: Mapped[str] = mapped_column(Text())

@@ -209,3 +209,413 @@ class OrganizationContactResponse(OrganizationContactBase):
 
     class Config:
         from_attributes = True
+
+
+class OrganizationEducationalProgramDocumentBase(BaseModel):
+    # Название/заголовок документа
+    title: Annotated[str, Field(max_length=200)]
+    # Сам файл документа
+    file_url: Annotated[str, Field(max_length=500)]
+
+
+class OrganizationEducationalProgramDocumentCreate(
+    OrganizationEducationalProgramDocumentBase
+):
+    pass
+
+
+class OrganizationEducationalProgramDocumentUpdate(
+    OrganizationEducationalProgramDocumentBase
+):
+    title: Annotated[str | None, Field(max_length=200, default=None)]
+    file_url: Annotated[str | None, Field(max_length=500, default=None)]
+
+
+class OrganizationEducationalProgramDocumentResponse(
+    OrganizationEducationalProgramDocumentBase
+):
+    id: uuid.UUID
+
+    class Config:
+        from_attributes = True
+
+
+class OrganizationEducationalProgramContactBase(BaseModel):
+    # ФИО
+    full_name: Annotated[str, Field(max_length=200)]
+    # Дисциплина ответственного лица
+    discipline: Annotated[str, Field(max_length=200)]
+    # Контактный Email
+    email: Annotated[str, Field(max_length=320)]
+    # Контактный номер телефона
+    phone: Annotated[str, Field(max_length=40)]
+
+
+class OrganizationEducationalProgramContactCreate(
+    OrganizationEducationalProgramContactBase
+):
+    pass
+
+
+class OrganizationEducationalProgramContactUpdate(
+    OrganizationEducationalProgramContactBase
+):
+    full_name: Annotated[str | None, Field(max_length=200, default=None)]
+    discipline: Annotated[str | None, Field(max_length=20, default=None)]
+    email: Annotated[str | None, Field(max_length=320, default=None)]
+    phone: Annotated[str | None, Field(max_length=40, default=None)]
+
+
+class OrganizationEducationalProgramContactResponse(
+    OrganizationEducationalProgramContactBase
+):
+    id: uuid.UUID
+
+    class Config:
+        from_attributes = True
+
+
+class OrganizationThematicMeetingParticipantBase(BaseModel):
+    # Имя
+    first_name: Annotated[str, Field(max_length=10)]
+    # Фамилия
+    last_name: Annotated[str, Field(max_length=10)]
+    # Фотография участника (опционально)
+    image_url: Annotated[str, Field(max_length=500)] | None = None
+
+
+class OrganizationThematicMeetingParticipantCreate(
+    OrganizationThematicMeetingParticipantBase
+):
+    pass
+
+
+class OrganizationThematicMeetingParticipantUpdate(
+    OrganizationThematicMeetingParticipantBase
+):
+    first_name: Annotated[str | None, Field(max_length=10, default=None)]
+    last_name: Annotated[str | None, Field(max_length=10, default=None)]
+    image_url: Annotated[str | None, Field(max_length=500, default=None)]
+
+
+class OrganizationThematicMeetingParticipantResponse(
+    OrganizationThematicMeetingParticipantBase
+):
+    id: uuid.UUID
+
+    class Config:
+        from_attributes = True
+
+
+class OrganizationThematicMeetingEventBase(BaseModel):
+    # Заголовок/название мероприятия
+    title: Annotated[str, Field(max_length=200)]
+    # Описание мероприятия
+    description: Annotated[str, Field(max_length=100)]
+    # Изображение мероприятия
+    image_url: Annotated[str, Field(max_length=500)]
+    # Активно ли мероприятие
+    is_active: bool = True
+    # Дата в формате dd.mm.YYYY hh:mm
+    event_date: datetime
+    # Локация
+    location: Annotated[str, Field(max_length=20)] | None = None
+
+
+class OrganizationThematicMeetingEventCreate(OrganizationThematicMeetingEventBase):
+    pass
+
+
+class OrganizationThematicMeetingEventUpdate(OrganizationThematicMeetingEventBase):
+    title: Annotated[str | None, Field(max_length=200, default=None)]
+    description: Annotated[str | None, Field(max_length=100, default=None)]
+    image_url: Annotated[str | None, Field(max_length=500, default=None)]
+    is_active: bool | None = None
+    event_date: datetime | None = None
+    location: Annotated[str | None, Field(max_length=200, default=None)]
+
+
+class OrganizationThematicMeetingEventResponse(OrganizationThematicMeetingEventBase):
+    id: uuid.UUID
+
+    class Config:
+        from_attributes = True
+
+
+class OrganizationThematicMeetingContactBase(BaseModel):
+    # ФИО
+    full_name: Annotated[str, Field(max_length=200)]
+    # Должность
+    position: Annotated[str, Field(max_length=200)]
+    # Контактный Email
+    email: Annotated[str, Field(max_length=320)]
+    # Контактный номер телефона
+    phone: Annotated[str, Field(max_length=40)]
+    # Фотография ответственного лица
+    image_url: Annotated[str, Field(max_length=500)] | None = None
+
+
+class OrganizationThematicMeetingContactCreate(OrganizationThematicMeetingContactBase):
+    pass
+
+
+class OrganizationThematicMeetingContactUpdate(OrganizationThematicMeetingContactBase):
+    full_name: Annotated[str | None, Field(max_length=200, default=None)]
+    position: Annotated[str | None, Field(max_length=200, default=None)]
+    email: Annotated[str | None, Field(max_length=320, default=None)]
+    phone: Annotated[str | None, Field(max_length=40, default=None)]
+    image_url: Annotated[str | None, Field(max_length=500, default=None)]
+
+
+class OrganizationThematicMeetingContactResponse(
+    OrganizationThematicMeetingContactBase
+):
+    id: uuid.UUID
+
+    class Config:
+        from_attributes = True
+
+
+class OrganizationEtiquetteInEducationDocumentBase(BaseModel):
+    # Название/заголовок документа
+    title: Annotated[str, Field(max_length=200)]
+    # Сам файл документа
+    file_url: Annotated[str, Field(max_length=500)]
+
+
+class OrganizationEtiquetteInEducationDocumentCreate(
+    OrganizationEtiquetteInEducationDocumentBase
+):
+    pass
+
+
+class OrganizationEtiquetteInEducationDocumentUpdate(
+    OrganizationEtiquetteInEducationDocumentBase
+):
+    title: Annotated[str | None, Field(max_length=200, default=None)]
+    file_url: Annotated[str | None, Field(max_length=500, default=None)]
+
+
+class OrganizationEtiquetteInEducationDocumentResponse(
+    OrganizationEtiquetteInEducationDocumentBase
+):
+    id: uuid.UUID
+
+    class Config:
+        from_attributes = True
+
+
+class OrganizationEtiquetteInEducationEventBase(BaseModel):
+    # Заголовок/название мероприятия
+    title: Annotated[str, Field(max_length=200)]
+    # Описание мероприятия
+    description: Annotated[str, Field(max_length=1000)]
+    # Изображение мероприятия
+    image_url: Annotated[str, Field(max_length=50)]
+    # Активно ли мероприятие
+    is_active: bool = True
+    # Дата в формате dd.mm.YYYY hh:mm
+    event_date: datetime
+    # Локация
+    location: Annotated[str, Field(max_length=20)] | None = None
+
+
+class OrganizationEtiquetteInEducationEventCreate(
+    OrganizationEtiquetteInEducationEventBase
+):
+    pass
+
+
+class OrganizationEtiquetteInEducationEventUpdate(
+    OrganizationEtiquetteInEducationEventBase
+):
+    title: Annotated[str | None, Field(max_length=200, default=None)]
+    description: Annotated[str | None, Field(max_length=100, default=None)]
+    image_url: Annotated[str | None, Field(max_length=500, default=None)]
+    is_active: bool | None = None
+    event_date: datetime | None = None
+    location: Annotated[str | None, Field(max_length=200, default=None)]
+
+
+class OrganizationEtiquetteInEducationEventResponse(
+    OrganizationEtiquetteInEducationEventBase
+):
+    id: uuid.UUID
+
+    class Config:
+        from_attributes = True
+
+
+class OrganizationEtiquetteInEducationContactBase(BaseModel):
+    # ФИО
+    full_name: Annotated[str, Field(max_length=200)]
+    # Должность
+    position: Annotated[str, Field(max_length=200)]
+    # Контактный Email
+    email: Annotated[str, Field(max_length=320)]
+    # Контактный номер телефона
+    phone: Annotated[str, Field(max_length=40)]
+    # Фотография ответственного лица
+    image_url: Annotated[str, Field(max_length=500)] | None = None
+
+
+class OrganizationEtiquetteInEducationContactCreate(
+    OrganizationEtiquetteInEducationContactBase
+):
+    pass
+
+
+class OrganizationEtiquetteInEducationContactUpdate(
+    OrganizationEtiquetteInEducationContactBase
+):
+    full_name: Annotated[str | None, Field(max_length=200, default=None)]
+    position: Annotated[str | None, Field(max_length=20, default=None)]
+    email: Annotated[str | None, Field(max_length=320, default=None)]
+    phone: Annotated[str | None, Field(max_length=40, default=None)]
+    image_url: Annotated[str | None, Field(max_length=500, default=None)]
+
+
+class OrganizationEtiquetteInEducationContactResponse(
+    OrganizationEtiquetteInEducationContactBase
+):
+    id: uuid.UUID
+
+    class Config:
+        from_attributes = True
+
+
+class OrganizationProfessionalLearningTrajectoryDocumentBase(BaseModel):
+    # Название/заголовок документа
+    title: Annotated[str, Field(max_length=200)]
+    # Сам файл документа
+    file_url: Annotated[str, Field(max_length=500)]
+
+
+class OrganizationProfessionalLearningTrajectoryDocumentCreate(
+    OrganizationProfessionalLearningTrajectoryDocumentBase
+):
+    pass
+
+
+class OrganizationProfessionalLearningTrajectoryDocumentUpdate(
+    OrganizationProfessionalLearningTrajectoryDocumentBase
+):
+    title: Annotated[str | None, Field(max_length=200, default=None)]
+    file_url: Annotated[str | None, Field(max_length=500, default=None)]
+
+
+class OrganizationProfessionalLearningTrajectoryDocumentResponse(
+    OrganizationProfessionalLearningTrajectoryDocumentBase
+):
+    id: uuid.UUID
+
+    class Config:
+        from_attributes = True
+
+
+class OrganizationProfessionalLearningTrajectoryParticipantBase(BaseModel):
+    # Имя
+    first_name: Annotated[str, Field(max_length=10)]
+    # Фамилия
+    last_name: Annotated[str, Field(max_length=100)]
+    # Фотография участника (опционально)
+    image_url: Annotated[str, Field(max_length=500)] | None = None
+
+
+class OrganizationProfessionalLearningTrajectoryParticipantCreate(
+    OrganizationProfessionalLearningTrajectoryParticipantBase
+):
+    pass
+
+
+class OrganizationProfessionalLearningTrajectoryParticipantUpdate(
+    OrganizationProfessionalLearningTrajectoryParticipantBase
+):
+    first_name: Annotated[str | None, Field(max_length=100, default=None)]
+    last_name: Annotated[str | None, Field(max_length=100, default=None)]
+    image_url: Annotated[str | None, Field(max_length=500, default=None)]
+
+
+class OrganizationProfessionalLearningTrajectoryParticipantResponse(
+    OrganizationProfessionalLearningTrajectoryParticipantBase
+):
+    id: uuid.UUID
+
+    class Config:
+        from_attributes = True
+
+
+class OrganizationProfessionalLearningTrajectoryEventBase(BaseModel):
+    # Заголовок/название мероприятия
+    title: Annotated[str, Field(max_length=200)]
+    # Описание мероприятия
+    description: Annotated[str, Field(max_length=100)]
+    # Изображение мероприятия
+    image_url: Annotated[str, Field(max_length=500)]
+    # Активно ли мероприятие
+    is_active: bool = True
+    # Дата в формате dd.mm.YYYY hh:mm
+    event_date: datetime
+    # Локация
+    location: Annotated[str, Field(max_length=20)] | None = None
+
+
+class OrganizationProfessionalLearningTrajectoryEventCreate(
+    OrganizationProfessionalLearningTrajectoryEventBase
+):
+    pass
+
+
+class OrganizationProfessionalLearningTrajectoryEventUpdate(
+    OrganizationProfessionalLearningTrajectoryEventBase
+):
+    title: Annotated[str | None, Field(max_length=200, default=None)]
+    description: Annotated[str | None, Field(max_length=100, default=None)]
+    image_url: Annotated[str | None, Field(max_length=500, default=None)]
+    is_active: bool | None = None
+    event_date: datetime | None = None
+    location: Annotated[str | None, Field(max_length=200, default=None)]
+
+
+class OrganizationProfessionalLearningTrajectoryEventResponse(
+    OrganizationProfessionalLearningTrajectoryEventBase
+):
+    id: uuid.UUID
+
+    class Config:
+        from_attributes = True
+
+
+class OrganizationProfessionalLearningTrajectoryContactBase(BaseModel):
+    # ФИО
+    full_name: Annotated[str, Field(max_length=200)]
+    # Должность
+    position: Annotated[str, Field(max_length=200)]
+    # Контактный Email (опционально)
+    email: Annotated[str, Field(max_length=320)] | None = None
+    # Контактный номер телефона
+    phone: Annotated[str, Field(max_length=40)]
+
+
+class OrganizationProfessionalLearningTrajectoryContactCreate(
+    OrganizationProfessionalLearningTrajectoryContactBase
+):
+    pass
+
+
+class OrganizationProfessionalLearningTrajectoryContactUpdate(
+    OrganizationProfessionalLearningTrajectoryContactBase
+):
+    full_name: Annotated[str | None, Field(max_length=200, default=None)]
+    position: Annotated[str | None, Field(max_length=200, default=None)]
+    email: Annotated[str | None, Field(max_length=320, default=None)]
+    phone: Annotated[str | None, Field(max_length=40, default=None)]
+
+
+class OrganizationProfessionalLearningTrajectoryContactResponse(
+    OrganizationProfessionalLearningTrajectoryContactBase
+):
+    id: uuid.UUID
+
+    class Config:
+        from_attributes = True

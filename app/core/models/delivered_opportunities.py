@@ -1,7 +1,7 @@
-from sqlalchemy import String, Text, Enum as SQLEnum
+from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from core.models.base import Base, SiteSection
+from core.models.base import Base
 from core.models.mixins.id import IdMixin
 
 
@@ -9,12 +9,6 @@ class DeliveredOpportunity(Base, IdMixin):
     """
     Модель для хранения доставляемых возможностей
     """
-
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[str] = mapped_column(
-        String(100),
-        nullable=True,
-    )
 
     __tablename__ = "delivered_opportunities"
 

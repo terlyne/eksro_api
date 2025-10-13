@@ -1,30 +1,16 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
 
-from sqlalchemy import String, Text, DateTime, ARRAY, Enum as SQLEnum, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, Text, DateTime
+from sqlalchemy.orm import Mapped, mapped_column
 
-from core.models.base import Base, SiteSection, ParentSubpage
+from core.models.base import Base
 from core.models.mixins.id import IdMixin
-
-if TYPE_CHECKING:
-    from core.models.news_type import NewsType
 
 
 class ParentDocument(Base, IdMixin):
     """
     Модель для хранения документов в разделе "Родителям"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.PARENTS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[ParentSubpage] = mapped_column(
-        SQLEnum(ParentSubpage, name="parentsubpage_enum"),
-        nullable=True,
-    )
 
     __tablename__ = "parent_documents"
 
@@ -39,16 +25,6 @@ class ParentContact(Base, IdMixin):
     """
     Модель для хранения контактов в разделе "Родителям"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.PARENTS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[ParentSubpage] = mapped_column(
-        SQLEnum(ParentSubpage, name="parentsubpage_enum"),
-        nullable=True,
-    )
 
     __tablename__ = "parent_contacts"
 
@@ -70,17 +46,6 @@ class ThematicMeetingParticipant(Base, IdMixin):
     Модель для хранения участников тематических встреч в разделе "Родителям"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.PARENTS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[ParentSubpage] = mapped_column(
-        SQLEnum(ParentSubpage, name="parentsubpage_enum"),
-        default=ParentSubpage.THEMATIC_MEETINGS,
-        nullable=True,
-    )
-
     __tablename__ = "thematic_meeting_participants"
 
     # Имя
@@ -97,17 +62,6 @@ class ThematicMeetingEvent(Base, IdMixin):
     """
     Модель для хранения мероприятий тематических встреч в разделе "Родителям"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.PARENTS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[ParentSubpage] = mapped_column(
-        SQLEnum(ParentSubpage, name="parentsubpage_enum"),
-        default=ParentSubpage.THEMATIC_MEETINGS,
-        nullable=True,
-    )
 
     __tablename__ = "thematic_meeting_events"
 
@@ -135,17 +89,6 @@ class ThematicMeetingContact(Base, IdMixin):
     Модель для хранения контактов тематических встреч в разделе "Родителям"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.PARENTS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[ParentSubpage] = mapped_column(
-        SQLEnum(ParentSubpage, name="parentsubpage_enum"),
-        default=ParentSubpage.THEMATIC_MEETINGS,
-        nullable=True,
-    )
-
     __tablename__ = "thematic_meeting_contacts"
 
     # ФИО
@@ -169,17 +112,6 @@ class EtiquetteInEducationDocument(Base, IdMixin):
     Модель для хранения документов проекта "Этикет в образовании" в разделе "Родителям"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.PARENTS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[ParentSubpage] = mapped_column(
-        SQLEnum(ParentSubpage, name="parentsubpage_enum"),
-        default=ParentSubpage.ETIQUETTE_IN_EDUCATION,
-        nullable=True,
-    )
-
     __tablename__ = "etiquette_in_education_documents"
 
     # Название/заголовок документа
@@ -193,17 +125,6 @@ class EtiquetteInEducationEvent(Base, IdMixin):
     """
     Модель для хранения мероприятий проекта "Этикет в образовании" в разделе "Родителям"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.PARENTS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[ParentSubpage] = mapped_column(
-        SQLEnum(ParentSubpage, name="parentsubpage_enum"),
-        default=ParentSubpage.ETIQUETTE_IN_EDUCATION,
-        nullable=True,
-    )
 
     __tablename__ = "etiquette_in_education_events"
 
@@ -231,17 +152,6 @@ class EtiquetteInEducationContact(Base, IdMixin):
     Модель для хранения контактов проекта "Этикет в образовании" в разделе "Родителям"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.PARENTS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[ParentSubpage] = mapped_column(
-        SQLEnum(ParentSubpage, name="parentsubpage_enum"),
-        default=ParentSubpage.ETIQUETTE_IN_EDUCATION,
-        nullable=True,
-    )
-
     __tablename__ = "etiquette_in_education_contacts"
 
     # ФИО
@@ -265,17 +175,6 @@ class ProfessionalLearningTrajectoryDocument(Base, IdMixin):
     Модель для хранения документов проекта "Профессиональная траектория обучения ребенка" в разделе "Родителям"
     """
 
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.PARENTS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[ParentSubpage] = mapped_column(
-        SQLEnum(ParentSubpage, name="parentsubpage_enum"),
-        default=ParentSubpage.PROFESSIONAL_LEARNING_TRAJECTORY_CHILD,
-        nullable=True,
-    )
-
     __tablename__ = "professional_learning_trajectory_documents"
 
     # Название/заголовок документа
@@ -289,17 +188,6 @@ class ProfessionalLearningTrajectoryParticipant(Base, IdMixin):
     """
     Модель для хранения участников проекта "Профессиональная траектория обучения ребенка" в разделе "Родителям"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.PARENTS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[ParentSubpage] = mapped_column(
-        SQLEnum(ParentSubpage, name="parentsubpage_enum"),
-        default=ParentSubpage.PROFESSIONAL_LEARNING_TRAJECTORY_CHILD,
-        nullable=True,
-    )
 
     __tablename__ = "professional_learning_trajectory_participants"
 
@@ -317,17 +205,6 @@ class ProfessionalLearningTrajectoryEvent(Base, IdMixin):
     """
     Модель для хранения мероприятий проекта "Профессиональная траектория обучения ребенка" в разделе "Родителям"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.PARENTS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[ParentSubpage] = mapped_column(
-        SQLEnum(ParentSubpage, name="parentsubpage_enum"),
-        default=ParentSubpage.PROFESSIONAL_LEARNING_TRAJECTORY_CHILD,
-        nullable=True,
-    )
 
     __tablename__ = "professional_learning_trajectory_events"
 
@@ -354,17 +231,6 @@ class ProfessionalLearningTrajectoryContact(Base, IdMixin):
     """
     Модель для хранения контактов проекта "Профессиональная траектория обучения ребенка" в разделе "Родителям"
     """
-
-    # Добавляем тип страницы, на котором эти контакты отображаются (обязательное поле)
-    site_section: Mapped[SiteSection] = mapped_column(
-        SQLEnum(SiteSection, name="sitesection_enum"), default=SiteSection.PARENTS
-    )
-    # Подраздел секции/страницы сайта (опциональное поле, только там, где есть подразделы)
-    subpage: Mapped[ParentSubpage] = mapped_column(
-        SQLEnum(ParentSubpage, name="parentsubpage_enum"),
-        default=ParentSubpage.PROFESSIONAL_LEARNING_TRAJECTORY_CHILD,
-        nullable=True,
-    )
 
     __tablename__ = "professional_learning_trajectory_contacts"
 

@@ -36,10 +36,7 @@ router.include_router(
 router.include_router(
     parent_section_router, prefix="/parent-section", tags=["Родителям"]
 )
-soviet_section_router.include_router(
-    application_form_router,
-    prefix="/application-form",
-)
+
 router.include_router(
     soviet_section_router, prefix="/soviet-section", tags=["Управляющим советам"]
 )

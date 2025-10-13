@@ -23,50 +23,26 @@ from api.parent_section.repository import (
     ProfessionalLearningTrajectoryContactRepository,
 )
 from api.parent_section.schemas import (
-    ParentDocumentCreate,
     ParentDocumentResponse,
-    ParentDocumentUpdate,
-    ParentContactCreate,
     ParentContactResponse,
-    ParentContactUpdate,
-    ThematicMeetingParticipantCreate,
     ThematicMeetingParticipantResponse,
-    ThematicMeetingParticipantUpdate,
-    ThematicMeetingEventCreate,
     ThematicMeetingEventResponse,
-    ThematicMeetingEventUpdate,
-    ThematicMeetingContactCreate,
     ThematicMeetingContactResponse,
-    ThematicMeetingContactUpdate,
-    EtiquetteInEducationDocumentCreate,
     EtiquetteInEducationDocumentResponse,
-    EtiquetteInEducationDocumentUpdate,
-    EtiquetteInEducationEventCreate,
     EtiquetteInEducationEventResponse,
-    EtiquetteInEducationEventUpdate,
-    EtiquetteInEducationContactCreate,
     EtiquetteInEducationContactResponse,
-    EtiquetteInEducationContactUpdate,
-    ProfessionalLearningTrajectoryDocumentCreate,
     ProfessionalLearningTrajectoryDocumentResponse,
-    ProfessionalLearningTrajectoryDocumentUpdate,
-    ProfessionalLearningTrajectoryParticipantCreate,
     ProfessionalLearningTrajectoryParticipantResponse,
-    ProfessionalLearningTrajectoryParticipantUpdate,
-    ProfessionalLearningTrajectoryEventCreate,
     ProfessionalLearningTrajectoryEventResponse,
-    ProfessionalLearningTrajectoryEventUpdate,
-    ProfessionalLearningTrajectoryContactCreate,
     ProfessionalLearningTrajectoryContactResponse,
-    ProfessionalLearningTrajectoryContactUpdate,
 )
 
 
 router = APIRouter()
 
 
-# Parent Documents
-@router.get("/parent/documents/", response_model=list[ParentDocumentResponse])
+# Learning Program Documents
+@router.get("/learning-program/documents/", response_model=list[ParentDocumentResponse])
 async def get_parent_documents(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
@@ -75,7 +51,9 @@ async def get_parent_documents(
     return items
 
 
-@router.get("/parent/documents/{item_id}/", response_model=ParentDocumentResponse)
+@router.get(
+    "/learning-program/documents/{item_id}/", response_model=ParentDocumentResponse
+)
 async def get_parent_document_by_id(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -90,7 +68,7 @@ async def get_parent_document_by_id(
     return item
 
 
-@router.post("/parent/documents/", response_model=ParentDocumentResponse)
+@router.post("/learning-program/documents/", response_model=ParentDocumentResponse)
 async def create_parent_document(
     title: Annotated[str, Form()],
     file: UploadFile,  # Файл документа
@@ -112,7 +90,9 @@ async def create_parent_document(
     return item
 
 
-@router.put("/parent/documents/{item_id}/", response_model=ParentDocumentResponse)
+@router.put(
+    "/learning-program/documents/{item_id}/", response_model=ParentDocumentResponse
+)
 async def update_parent_document(
     item_id: uuid.UUID,
     title: Annotated[str | None, Form()] = None,
@@ -150,7 +130,9 @@ async def update_parent_document(
     return item
 
 
-@router.delete("/parent/documents/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/learning-program/documents/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_parent_document(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -179,7 +161,7 @@ async def delete_parent_document(
 
 
 # Parent Contacts
-@router.get("/parent/contacts/", response_model=list[ParentContactResponse])
+@router.get("/learning-program/contacts/", response_model=list[ParentContactResponse])
 async def get_parent_contacts(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
@@ -204,7 +186,7 @@ async def get_parent_contact_by_id(
     return item
 
 
-@router.post("/parent/contacts/", response_model=ParentContactResponse)
+@router.post("/learning-program/contacts/", response_model=ParentContactResponse)
 async def create_parent_contact(
     full_name: Annotated[str, Form()],
     discipline: Annotated[str, Form()],
@@ -223,7 +205,9 @@ async def create_parent_contact(
     return item
 
 
-@router.put("/parent/contacts/{item_id}/", response_model=ParentContactResponse)
+@router.put(
+    "/learning-program/contacts/{item_id}/", response_model=ParentContactResponse
+)
 async def update_parent_contact(
     item_id: uuid.UUID,
     full_name: Annotated[str | None, Form()] = None,
@@ -251,7 +235,9 @@ async def update_parent_contact(
     return item
 
 
-@router.delete("/parent/contacts/{item_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/learning-program/contacts/{item_id}/", status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_parent_contact(
     item_id: uuid.UUID,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -579,7 +565,7 @@ async def create_thematic_meeting_contact(
     full_name: Annotated[str, Form()],
     position: Annotated[str, Form()],
     phone: Annotated[str, Form()],
-    email: Annotated[str | None, Form()] = None,
+    email: Annotated[str, Form()],
     image: UploadFile | None = None,  # Файл изображения (опционально)
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),
@@ -995,7 +981,7 @@ async def create_etiquette_in_education_contact(
     full_name: Annotated[str, Form()],
     position: Annotated[str, Form()],
     phone: Annotated[str, Form()],
-    email: Annotated[str | None, Form()] = None,
+    email: Annotated[str, Form()],
     image: UploadFile | None = None,  # Файл изображения (опционально)
     session: AsyncSession = Depends(db_helper.session_getter),
     user: User = Depends(get_current_active_user),

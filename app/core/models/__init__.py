@@ -70,15 +70,23 @@ from core.models.organization_section import (
     OrganizationNews,
     OrganizationQuestion,
     OrganizationContact,
+    OrganizationEducationalProgramDocument,
+    OrganizationEducationalProgramContact,
+    OrganizationThematicMeetingParticipant,
+    OrganizationThematicMeetingEvent,
+    OrganizationThematicMeetingContact,
+    OrganizationEtiquetteInEducationDocument,
+    OrganizationEtiquetteInEducationEvent,
+    OrganizationEtiquetteInEducationContact,
+    OrganizationProfessionalLearningTrajectoryDocument,
+    OrganizationProfessionalLearningTrajectoryParticipant,
+    OrganizationProfessionalLearningTrajectoryEvent,
+    OrganizationProfessionalLearningTrajectoryContact,
 )
 from core.models.application_form import ApplicationForm
 
-from core.models.base import SiteSection
-
 
 all = (
-    "SiteSection",
-    # ===
     "Base",
     "User",
     "Banner",
@@ -146,5 +154,17 @@ all = (
     "OrganizationNews",
     "OrganizationQuestion",
     "OrganizationContact",
+    "OrganizationEducationalProgramDocument",
+    "OrganizationEducationalProgramContact",
+    "OrganizationThematicMeetingParticipant",
+    "OrganizationThematicMeetingEvent",
+    "OrganizationThematicMeetingContact",
+    "OrganizationEtiquetteInEducationDocument",
+    "OrganizationEtiquetteInEducationEvent",
+    "OrganizationEtiquetteInEducationContact",
+    "OrganizationProfessionalLearningTrajectoryDocument",
+    "OrganizationProfessionalLearningTrajectoryParticipant",
+    "OrganizationProfessionalLearningTrajectoryEvent",
+    "OrganizationProfessionalLearningTrajectoryContact",
     "ApplicationForm",
 )

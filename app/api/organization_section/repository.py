@@ -8,6 +8,18 @@ from core.models import (
     OrganizationNews,
     OrganizationQuestion,
     OrganizationContact,
+    OrganizationEducationalProgramDocument,
+    OrganizationEducationalProgramContact,
+    OrganizationThematicMeetingParticipant,
+    OrganizationThematicMeetingEvent,
+    OrganizationThematicMeetingContact,
+    OrganizationEtiquetteInEducationDocument,
+    OrganizationEtiquetteInEducationEvent,
+    OrganizationEtiquetteInEducationContact,
+    OrganizationProfessionalLearningTrajectoryDocument,
+    OrganizationProfessionalLearningTrajectoryParticipant,
+    OrganizationProfessionalLearningTrajectoryEvent,
+    OrganizationProfessionalLearningTrajectoryContact,
 )
 from repository.base import BaseRepository
 
@@ -65,4 +77,100 @@ class OrganizationContactRepository(BaseRepository):
         super().__init__(
             session=session,
             model=OrganizationContact,
+        )
+
+
+class OrganizationEducationalProgramDocumentRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(
+            session=session,
+            model=OrganizationEducationalProgramDocument,
+        )
+
+
+class OrganizationEducationalProgramContactRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(
+            session=session,
+            model=OrganizationEducationalProgramContact,
+        )
+
+
+class OrganizationThematicMeetingParticipantRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(
+            session=session,
+            model=OrganizationThematicMeetingParticipant,
+        )
+
+
+class OrganizationThematicMeetingEventRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(
+            session=session,
+            model=OrganizationThematicMeetingEvent,
+        )
+
+
+class OrganizationThematicMeetingContactRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(
+            session=session,
+            model=OrganizationThematicMeetingContact,
+        )
+
+
+class OrganizationEtiquetteInEducationDocumentRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(
+            session=session,
+            model=OrganizationEtiquetteInEducationDocument,
+        )
+
+
+class OrganizationEtiquetteInEducationEventRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(
+            session=session,
+            model=OrganizationEtiquetteInEducationEvent,
+        )
+
+
+class OrganizationEtiquetteInEducationContactRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(
+            session=session,
+            model=OrganizationEtiquetteInEducationContact,
+        )
+
+
+class OrganizationProfessionalLearningTrajectoryDocumentRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(
+            session=session,
+            model=OrganizationProfessionalLearningTrajectoryDocument,
+        )
+
+
+class OrganizationProfessionalLearningTrajectoryParticipantRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(
+            session=session,
+            model=OrganizationProfessionalLearningTrajectoryParticipant,
+        )
+
+
+class OrganizationProfessionalLearningTrajectoryEventRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(
+            session=session,
+            model=OrganizationProfessionalLearningTrajectoryEvent,
+        )
+
+
+class OrganizationProfessionalLearningTrajectoryContactRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        super().__init__(
+            session=session,
+            model=OrganizationProfessionalLearningTrajectoryContact,
         )

@@ -34,7 +34,7 @@ class BaseRepository:
         obj = await self.get_by_id(obj_id)
         if obj:
             for key, value in kwargs.items():
-                if hasattr(obj, key):
+                if hasattr(obj, key) and value is not None:
                     setattr(obj, key, value)
 
             await self.session.commit()
