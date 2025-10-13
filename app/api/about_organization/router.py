@@ -13,9 +13,7 @@ from api.managers.router import router as managers_router
 from api.documents.router import router as documents_router
 from api.about_organization.repository import AboutOrganizationRepository
 from api.about_organization.schemas import (
-    AboutOrganizationCreate,
     AboutOrganizationResponse,
-    AboutOrganizationUpdate,
 )
 
 

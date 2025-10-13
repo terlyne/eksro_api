@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.file.service import file_service, DOCUMENTS_FOLDER
+from core.file.service import file_service, NEWS_IMAGES_FOLDER
 from core.models import User
 from core.db_helper import db_helper
 from api.dependencies import get_current_active_user
@@ -66,7 +66,7 @@ async def create_news(
     # Сохраняем изображение новости
     image_url = await file_service.save_file(
         upload_file=image,
-        subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
+        subdirectory=NEWS_IMAGES_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
     )
 
     # Создаем запись о новости
@@ -114,7 +114,7 @@ async def update_news(
         # Сохраняем новое изображение
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
+            subdirectory=NEWS_IMAGES_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
 
     # Обновляем информацию о новости
