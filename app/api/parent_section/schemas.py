@@ -59,9 +59,9 @@ class ParentContactResponse(ParentContactBase):
 
 class ThematicMeetingParticipantBase(BaseModel):
     # Имя
-    first_name: Annotated[str, Field(max_length=10)]
+    first_name: Annotated[str, Field(max_length=50)]
     # Фамилия
-    last_name: Annotated[str, Field(max_length=10)]
+    last_name: Annotated[str, Field(max_length=50)]
     # Фотография участника (опционально)
     image_url: Annotated[str, Field(max_length=500)] | None = None
 
@@ -71,8 +71,8 @@ class ThematicMeetingParticipantCreate(ThematicMeetingParticipantBase):
 
 
 class ThematicMeetingParticipantUpdate(ThematicMeetingParticipantBase):
-    first_name: Annotated[str | None, Field(max_length=10, default=None)]
-    last_name: Annotated[str | None, Field(max_length=100, default=None)]
+    first_name: Annotated[str | None, Field(max_length=50, default=None)]
+    last_name: Annotated[str | None, Field(max_length=50, default=None)]
     image_url: Annotated[str | None, Field(max_length=500, default=None)]
 
 
