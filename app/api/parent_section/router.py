@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.file.service import file_service, DOCUMENTS_FOLDER
+from core.file.service import file_service, DOCUMENTS_FOLDER, PARENT_SECTION_FOLDER
 from core.models import User
 from core.db_helper import db_helper
 from api.dependencies import get_current_active_user, verify_active_param_access
@@ -299,7 +299,7 @@ async def create_thematic_meeting_participant(
     if image:
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
+            subdirectory=PARENT_SECTION_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
 
     repo = ThematicMeetingParticipantRepository(session)
@@ -341,7 +341,7 @@ async def update_thematic_meeting_participant(
         # Сохраняем новое изображение
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,
+            subdirectory=PARENT_SECTION_FOLDER,
         )
 
     # Обновляем информацию об участнике
@@ -433,7 +433,7 @@ async def create_thematic_meeting_event(
     if image:
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
+            subdirectory=PARENT_SECTION_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
 
     repo = ThematicMeetingEventRepository(session)
@@ -480,7 +480,7 @@ async def update_thematic_meeting_event(
         # Сохраняем новое изображение
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,
+            subdirectory=PARENT_SECTION_FOLDER,
         )
 
     # Обновляем информацию о мероприятии
@@ -575,7 +575,7 @@ async def create_thematic_meeting_contact(
     if image:
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
+            subdirectory=PARENT_SECTION_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
 
     repo = ThematicMeetingContactRepository(session)
@@ -621,7 +621,7 @@ async def update_thematic_meeting_contact(
         # Сохраняем новое изображение
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,
+            subdirectory=PARENT_SECTION_FOLDER,
         )
 
     # Обновляем информацию о контакте
@@ -846,7 +846,7 @@ async def create_etiquette_in_education_event(
     if image:
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
+            subdirectory=PARENT_SECTION_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
 
     repo = EtiquetteInEducationEventRepository(session)
@@ -894,7 +894,7 @@ async def update_etiquette_in_education_event(
         # Сохраняем новое изображение
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,
+            subdirectory=PARENT_SECTION_FOLDER,
         )
 
     # Обновляем информацию о мероприятии
@@ -991,7 +991,7 @@ async def create_etiquette_in_education_contact(
     if image:
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
+            subdirectory=PARENT_SECTION_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
 
     repo = EtiquetteInEducationContactRepository(session)
@@ -1037,7 +1037,7 @@ async def update_etiquette_in_education_contact(
         # Сохраняем новое изображение
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,
+            subdirectory=PARENT_SECTION_FOLDER,
         )
 
     # Обновляем информацию о контакте
@@ -1259,7 +1259,7 @@ async def create_professional_learning_trajectory_participant(
     if image:
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
+            subdirectory=PARENT_SECTION_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
 
     repo = ProfessionalLearningTrajectoryParticipantRepository(session)
@@ -1301,7 +1301,7 @@ async def update_professional_learning_trajectory_participant(
         # Сохраняем новое изображение
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,
+            subdirectory=PARENT_SECTION_FOLDER,
         )
 
     # Обновляем информацию об участнике
@@ -1399,7 +1399,7 @@ async def create_professional_learning_trajectory_event(
     if image:
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
+            subdirectory=PARENT_SECTION_FOLDER,  # Используем DOCUMENTS_FOLDER для изображений тоже
         )
 
     repo = ProfessionalLearningTrajectoryEventRepository(session)
@@ -1447,7 +1447,7 @@ async def update_professional_learning_trajectory_event(
         # Сохраняем новое изображение
         image_url = await file_service.save_file(
             upload_file=image,
-            subdirectory=DOCUMENTS_FOLDER,
+            subdirectory=PARENT_SECTION_FOLDER,
         )
 
     # Обновляем информацию о мероприятии

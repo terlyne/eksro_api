@@ -5,5 +5,10 @@ from repository.base import BaseRepository
 
 
 class AboutOrganizationRepository(BaseRepository):
+    """
+    Репозиторий для работы с информацией об организации (устаревший,
+    используйте JSON-файл для хранения информации)
+    """
+
     def __init__(self, session: AsyncSession):
         super().__init__(session=session, model=AboutOrganization)

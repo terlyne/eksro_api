@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 class AboutOrganizationBase(BaseModel):
     # Заголовок (вроде статичный - Основные сведения)
-    title: Annotated[str, Field(max_length=100, default="Основные сведения")]
+    title: Annotated[str, Field(max_length=10, default="Основные сведения")]
     # Полное наименование образовательной организации
     full_name: Annotated[str, Field(max_length=500)]
     # Сокращенное наименование организации
@@ -24,6 +24,8 @@ class AboutOrganizationBase(BaseModel):
     contact_phone: Annotated[str, Field(max_length=40)]
     # Адрес электронной почты
     contact_email: Annotated[str, Field(max_length=320)]
+    # URL документа
+    document_url: Annotated[str | None, Field(default=None)]
 
 
 class AboutOrganizationCreate(AboutOrganizationBase):

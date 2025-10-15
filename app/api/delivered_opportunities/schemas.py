@@ -14,7 +14,7 @@ class DeliveredOpportunityBase(BaseModel):
     # Ответственное лицо
     responsible_person: Annotated[str, Field(max_length=200)]
     # Фотография отвественного лица
-    image_url: Annotated[str, Field(max_length=50)] | None = None
+    image_url: str | None = None
     # Контактный номер телефона
     contact_phone: Annotated[str, Field(max_length=40)] | None = None
     # Контактный Email адрес

@@ -10,6 +10,7 @@ from core.models.mixins.id import IdMixin
 class AboutOrganization(Base, IdMixin):
     """
     Модель для хранения основных сведений об образовательной организации
+    (устаревшая модель, используйте JSON-файл для хранения информации)
     """
 
     __tablename__ = "about_organizations"
